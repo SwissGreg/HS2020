@@ -7,6 +7,8 @@ Analysis 2:
 	-->180min written exam
 
 	-->Hilfsmittel: 10 Seiten, selbstverfasst von Hand oder getippt
+	
+	--> https://metaphor.ethz.ch/x/2019/hs/401-0213-16L/
 
 Numerical Methods:
 
@@ -18,7 +20,9 @@ Numerical Methods:
 	
 	--> There is a 30 min mid- and endterm and give a bonus of up to 20% for the final grade
 	
-	--> Hilfsmittel: keine
+	--> Hilfsmittel: keine	
+
+	-->
 
 System Programming and Computer Architecture:
 
@@ -27,6 +31,8 @@ System Programming and Computer Architecture:
 	-->180min written exam
 
 	-->Hilfsmittel: keine
+	
+	-->
 
 Theoretische Informatik:
 
@@ -38,6 +44,8 @@ Theoretische Informatik:
 	 2 exams will be made and at the end of semester this mark can be taken instead of writing the semester exam.
 
 	-->Hilfsmittel: keine
+	
+	--> https://courses.ite.inf.ethz.ch/theoInf20/
 
 Visual Computing:
 
@@ -46,3 +54,5 @@ Visual Computing:
 	-->180min written exam
 
 	-->Hilfsmittel: 8 Seiten handschriftliche Zusammenfassung und nicht programmierbare Taschenrechner
+	
+	--> http://crl.ethz.ch/teaching/viscomp-19/index.html
