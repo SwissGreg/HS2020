@@ -1,9 +1,12 @@
 # HS2020
 
 Analysis 2:
-	-5KP
-	-180min written exam
-	-Hilfsmittel: 10 Seiten, selbstverfasst von Hand oder getippt
+
+	-->5KP
+
+	-->180min written exam
+
+	-->Hilfsmittel: 10 Seiten, selbstverfasst von Hand oder getippt
 
 Numerical Methods:
 	-8KP
