@@ -52,7 +52,7 @@ System Programming and Computer Architecture:
 
 	-->Hilfsmittel: keine
 	
-	-->
+	-->TA email: bdennis@student.ethz.ch
 
 Theoretische Informatik:
 
