@@ -68,10 +68,11 @@ $\Rightarrow L_1\backslash\{\lambda,0\}$ is by definition infinite
 $"\Rightarrow"$\\
 Assume L is recursive, then there exists and Algorithm A which solves the Decision Problem (Entscheidungsproblem)\\
 $\Rightarrow$ We iterate through each element $x \in \sum^*$ in canonical order and decide with A if we add it to our enumeration.\\
+$\Rightarrow$ There is an algorithm enumerating L
 \newline
 $"\Leftarrow"$\\
 Assume there is an algorithm A which enumerates L\\
-We define an algorithm B which, when given an arbitrary $x \in \sum^*$ goes through the enumeration in canonical order and checks if x is equal to the current element e in the enumeration. If $|x| > |e|$ then B outputs "x not in L". Since $|x| < \infty$ B will terminate in a finite amount of time. If x == e then we output "x in L".\\
+We define an algorithm B which, when given an arbitrary $x \in \sum^*$ goes through the enumeration in canonical order and checks if x is equal to the current element e in the enumeration. If $|x| > |e|$ then B outputs "x not in L". Since $|x| < \infty$, B will terminate in a finite amount of time. If x == e then we output "x in L".\\
 $\Rightarrow$ B solves the Decision Problem for L\\
 $\Rightarrow$ L is recursive
 \end{enumerate}
