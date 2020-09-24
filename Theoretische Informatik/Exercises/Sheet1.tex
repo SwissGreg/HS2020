@@ -1,0 +1,78 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{a4paper, margin = 1in}
+\setlength{\headheight}{15.2pt}
+\pagestyle{fancy}
+\fancyhead[L]{Theoretische Informatik Sheet 1}
+\fancyhead[R]{Nicolae Binica, Tobias Böschung, Gregory Rozanski}
+\title{Theoretische Informatik Sheet 1}
+\begin{document}
+\begin{enumerate}
+\item
+\begin{enumerate}[label = \alph*)]
+\item We start by defining the base cases i.e $n\leq 2$. These are all 0 because the size of a word which contains each of the three letters at least once must be greater than 2. For $n \geq 3$ we can use the principle of inclusion and exclusion. $3^n$ is the total number of words which can be built using the three letters, $3\cdot2^n$ are the words which are made only using 2 of the three letters. Finally we add the 3 words which formed only using one letter to compensate for doubles that were subtracted in the second term.
+\begin{itemize}
+\item n = 0 $\Rightarrow$ 0
+\item n = 1 $\Rightarrow$ 0
+\item n = 2 $\Rightarrow$ 0
+\item n $\geq 3 \Rightarrow 3^n-3\cdot 2^n + 3$ 
+\end{itemize}
+\item We define:
+\begin{itemize}
+\item $a_n:= \#$ of words which end in 1 with length n and do not contain 11 as a subword.
+\item $b_n:= \#$ of words which end in 0 with length n and do not contain 11 as a subword
+\end{itemize}
+The solution to are task is: $sol_n:= a_n + b_n$
+We now derive the following two formulas:
+\begin{enumerate}
+\item $b_n = b_{n-1} + a_{n-1} = sol_{n-1}$\\ because we can append a 0 or a 1 to a word of size n-1 which ends in 0.
+\item $a_n =b_{n-1} = b_{n-2}+a_{n-2} = sol_{n-2}$\\  because words of size n-1 must end in a 0 for us to be able to append a 1
+
+\end{enumerate}
+for $n\geq 3$\\
+$\Rightarrow$
+\begin{itemize}
+\item $sol_{0}  = 0$
+\item $sol_{1} = 2$
+\item $sol_{2} = 3$
+\item $sol_{n \geq  3} = sol_{n-2} + sol_{n-1}$
+\end{itemize}
+\end{enumerate}
+\item 
+\begin{enumerate}[label = \alph*)]
+\item
+We assume there is a non-empty finite language $L \neq \{\lambda\}$ satisfying $L^2 = L$ and hence it must contain a largest element x according to the canonical ordering.\\
+$\Rightarrow$ by definition of concatination there is an element $x' \in L^2$ such that $ x' = x\cdot x$ (\\
+$\Rightarrow$ since $|x'| > |x|$ and x was the largest element in L it follows that $x' \notin L$\\
+$\Rightarrow$ No non-empty finite Language L exists such that $L \neq \{\lambda\}$ and $L^2 = L$
+\item We define the three languages as follows:
+\begin{itemize}
+\item $L_1 = \{0\}^*$
+\item $L_2 = \{0\}$
+\item $L_3 = \{00\}$
+\end{itemize}
+$\Rightarrow  (L_2 \cap L_3) = \{0\} \cap \{00\} = \emptyset$\\
+$\Rightarrow L_1 \cdot \emptyset = \emptyset$\\
+$\Rightarrow L_1 \cdot (L_2 \cap L_3)$ is finite\\
+\newline
+$L_1L_2 = L_1^+$ and $L_1L_3 = L_1\backslash\{\lambda,0\}$\\
+$\Rightarrow L_1^+ \cap L_1\backslash\{\lambda,0\} = L_1\backslash\{\lambda,0\}$ \\
+$\Rightarrow L_1\backslash\{\lambda,0\}$ is by definition infinite
+\end{enumerate}
+\item We must prove: An infinite language L is recursive $\iff$ there is an algorithm enumerating L\\
+$"\Rightarrow"$\\
+Assume L is recursive, then there exists and Algorithm A which solves the Decision Problem (Entscheidungsproblem)\\
+$\Rightarrow$ We iterate through each element $x \in \sum^*$ in canonical order and decide with A if we add it to our enumeration.\\
+\newline
+$"\Leftarrow"$\\
+Assume there is an algorithm A which enumerates L\\
+We define an algorithm B which, when given an arbitrary $x \in \sum^*$ goes through the enumeration in canonical order and checks if x is equal to the current element e in the enumeration. If $|x| > |e|$ then B outputs "x not in L". Since $|x| < \infty$ B will terminate in a finite amount of time. If x == e then we output "x in L".\\
+$\Rightarrow$ B solves the Decision Problem for L\\
+$\Rightarrow$ L is recursive
+\end{enumerate}
+\end{document}

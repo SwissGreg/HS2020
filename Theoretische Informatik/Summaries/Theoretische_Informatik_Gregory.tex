@@ -1,0 +1,233 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{a4paper, margin=1in}
+\title{Theoretische Informatik\\Summary}
+\begin{document}
+	\maketitle
+	\newpage
+
+\chapter{Alphabete, Wörter, Sprachen und die Darstellung von Problemen}
+
+\section{2.2 Alphabete, Wörter und Sprachen}
+
+\underline{\textbf{D2.1:}} Eine endliche nichtleere Menge $\sum$ heisst \textbf{Alphabet}. Die Elemente eines Alphabets werden \textbf{Buchstaben (Zeichen, Symbole)} genannt.
+
+Häufig verwendete Alphabete:
+\begin{itemize}
+\item $\sum_{bool} = \{0,1\}$
+\item $\sum_{lat} = \{a,b,c,...,z\}$
+\item $\sum_m = \{0,1,2,...,m-1\}$
+\item $\sum_{logic} = \{0,1,x,(,),AND,OR,NOT\}$
+
+\end{itemize}
+
+\underline{\textbf{D2.2:}} Ein \textbf{Wort} über $\sum$ ist eine endliche (eventuell leere) Folge von Buchstaben aus $\sum$. Das leere Wort $\lambda$ (manchmal $\epsilon$) ist die leere Buchstabenfolge. Die \textbf{Länge} $|w|$ eines Wortes w ist die Anzahl der Vorkommen von Buchstaben in w.
+
+\begin{itemize}
+\item $\sum^{*}$: Menge aller Wörter über $\sum$
+\item $\sum^{+} = \sum^{*}-\{\lambda\}$
+\end{itemize}
+
+Das leere Wort $\lambda$ ist ein Wort über jedem Alphabet.
+
+\underline{Verabredung:} Wir werden Wörter ohne Komma schreiben
+
+\underline{\textbf{D2.3:}} Die \textbf{Verkettung (Konkatenation)} für ein Alphabet $\sum$ ist eine Abbildung 
+\begin{center}
+$Kon(x,y) = x \cdot y = xy$
+\end{center}
+für alle $x,y \in \sum^{*}$
+Die Verkettung ist eine \underline{assoziative} Operation und ($\sum^*,Kon$) ist eine Halbgruppe(Monoid) mit neutralen element $\lambda$\\
+Für alle $x,y \in \sum^{*}$ gilt:
+\begin{center}
+$|xy| = |x \cdot y | = |x| + |y|$
+\end{center}
+\underline{\textbf{D2.4:}} Für ein Wort $a=a_1a_2a_3...a_n$ mit $a_i \in \sum$ für $i \in \{1,2,...,n\}$, bezeichnet $a^{R} = a_na_{n-1}...a_1$ die \textbf{Umkehrung} von a.\\
+\underline{\textbf{D2.5:}} Sei $\sum$ ein Alphabet. Für alle $x \in \sum^{*}$ und alle $i \in \mathbb{N}$ definieren wir die i-te \textbf{Iteration} $x^i$ von x als
+\begin{center}
+$x^0 = \lambda, x^1 = x und x^i = xx^{i-1}$
+\end{center}
+\underline{Beispiel:} aabbaaaaaa = $a^2b^2a^6$
+
+\underline{\textbf{D2.6:}} Seien v,w $\in \sum^*$ für ein Alphabet $\sum$
+\begin{itemize}
+\item v heisst ein \textbf{Teilwort} von w $\iff \exists x,y \in \sum^*: w = xvy$
+\item v heisst ein \textbf{Präfix} von w $\iff \exists y \in \sum^*: w = vy$
+\item v heisst ein \textbf{Suffix} von w $\iff \exists x \in \sum^*: w = xv$
+\end{itemize}
+
+
+\underline{\textbf{D2.7:}}
+\begin{itemize}
+\item $|x|_a$ ist die Anzahl der Vorkommen von a in x
+\item $|A|$ die KArdinalität der Menge A
+\item \textbf{P(A)} = $\{S|S\subseteq A\}$ die Potenzmenge von A
+\end{itemize}
+
+
+\underline{\textbf{D2.8:}} Sei $\sum = \{s_1,s_2,...,s_m\}, m\geq 1$ ein Alphabet und sei $s_1<s_2<...<s_m$ eine Ordnung auf $\sum$. Wir definieren die \textbf{kanonische Ordnung} auf $\sum^*$ für u,v $\in \sum^*$ wie folgt:
+
+\begin{center}
+$u<v \iff |u|<|v| \lor  |u|=|v| \land u = x \cdot s_i \cdot u' \land v = x \cdot s_j \cdot v'$ für irgendwelche $x,u',v' \in \sum^*$ und $i<j$ 
+
+\end{center}
+
+
+\underline{\textbf{D2.9:}} 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 120mm]{T1.png}
+\end{figure}
+
+\underline{\textbf{L2.1}} Seien $L_1,L_2,L_3$ Sprachen über einem Alphabet $\sum$. Dann gilt:
+\begin{center}
+$L_1L_2 \cup L_1L_3 = L_1(L_2 \cup L_3)$
+\end{center}
+\underline{\textbf{L 2.2}} Seien $L_1,L_2,L_3$ Sprachen über einem Alphabet $\sum$. Dann gilt:
+\begin{center}
+$L_1(L_2 \cap L_3) \subseteq L_1L_2 \cap L_1L_3)$
+\end{center}
+
+\underline{\textbf{L2.3}} Es existieren $U_1,U_2,U_3 \in (\sum_{bool})^*$ so dass
+\begin{center}
+$U_1(U_2 \cap U_3) \subset U_1U_2 \cap U_1U_3$
+\end{center}
+
+\underline{\textbf{D2.10:}} Seiene $\sum_1$ und $\sum_2$ zwei beleibige Alphabete. Ein \textbf{Homomorphismus} von $\sum_1^*$ nach $\sum_2^*$ ist jede FUnktion $h: \sum_1^* \rightarrow \sum_2^*$ mit den folgendend Eigenschaften
+\begin{itemize}
+\item $h(\lambda) = \lambda$
+\item $h(uv) = h(u) \cdot h(v)$ für alle $u,v \in \sum_1^*$
+\end{itemize}
+
+\section{2.3 Algorithmische Probleme}
+
+\underline{\textbf{D2.11:}} Das\textbf{Entscheidungsproblem ( $\sum$,L)} für ein gegebenes Alphabet $\sum$ und eine gegebene Sprache $L \subseteq \sum^*$ ist, für jedes $x \in \sum^*$ zu entscheiden, ob
+\begin{center}
+$x \in L \text{ oder } x \notin L$
+\end{center}
+Wenn ein Algorithmus A die Entscheidungsproblem löst sagen wir auch, dass A die sprache L \textbf{erkennt}.\\
+Wenn für eine Sprache L ein Algorithmus existiert, der L erkennt sagen wir dass L \textbf{rekursiv} ist
+\begin{figure}[H]
+\centering
+\includegraphics[width = 120mm]{T2.png}
+\end{figure}
+
+\underline{\textbf{D2.12:}} Seien $\sum$ und $\Gamma$ zwei Alphabete. Wir sagen dass ein Algorithmus A eine \textbf{ Funktion (Transformation) $f: \sum^* \rightarrow \Gamma^*$ berechnet (realisiert)} falls 
+\begin{center}
+$A(x) = f(x)$ für alle $x\in \sum^*$
+\end{center}
+
+\underline{\textbf{D2.13:}} Seien $\sum$ und $\Gamma$ zwei Alphabete und sei $R \subseteq \sum^* \times \Gamma^*$ eine Relation in $\sum^*$ und $\Gamma^*$. Ein Algorithmus \textbf{A berechnet R (oder löst das Relationsproblem R)} falls für jedes $x \in \sum^*$, für das ein $y \in \Gamma^*$ mit $(x,y) \in R$ existiert gilt:
+\begin{center}
+$(x,A(x)) \in R$
+\end{center} 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 120mm]{T3.png}
+\end{figure}
+
+\underline{\textbf{D2.14:}} \textbf{Optimierungsproblem:}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 120mm]{T4.png}
+\end{figure}
+
+\underline{\textbf{Teilproblem:}} Ein Optimierungsproblem $U_1 = (\sum_I,\sum_O,L',M,cost,goal)$  ist ein Teilproblem des Optimierungsproblems $U_2 =(\sum_I,\sum_O,L,M,cost,goal)$ falls $L'\subseteq L$
+
+\underline{\textbf{Knotenüberdeckung:}} Eine Knotenüberdeckung eines Graphen ist jede Knotenmenge $U \subseteq V$, so dass jede Kante aus E zu mindestens einem Knoten aus U inzident ist.
+
+\underline{\textbf{D2.15:}} Sei $\sum$ ein Alphabet, und sei $x \in \sum^*$. Wir sagen, dass ein Algorithmus A das Wort x \textbf{generiert}, falls A für die Eingabe $\lambda$ die Ausgabe x liefert.
+
+\underline{\textbf{D2.16:}} Sei $\sum$ ein Alphabetm und sei $L \subseteq \sum^*$. A ist ein \textbf{Aufzählungsalgorithmus für L}, falls A für jede Eingabe $n \in \mathbb{N}-\{0\}$ die Wortfolge $x_1,x_2,...,x_n$ ausgibt, wobei $x_1,x_2,...,x_n$ die kanonisch n ersten Wörter in L sind.
+
+\section{Kolmogorov-Komplexität}
+
+\underline{\textbf{Komprimierung}} Die Erzeugung einer kürzeren Darstellung eines Wortes x.
+
+\underline{\textbf{D2.17:}} Für jedes Wort $x \in (\sum_{bool})^*$ ist die \textbf{Kolmogorov-Komplexität K(x)} des Wortes x das Minimum der binären Längen der Pascal-Programme die x generieren.
+
+\underline{\textbf{L2.4}}Es existiert eine Konstante d, so dass für jede $x \in (\sum_{bool})^*$
+\begin{center}
+$K(x) \leq |x|+d$
+\end{center}
+
+\underline{\textbf{D2.18:}} Die Kolmogorov-Komplexität einer natürlichen Zahl n ist 
+\begin{center}
+$K(w_n) = K(Bin(n))$
+\end{center} 
+
+\underline{\textbf{L 2.5}} Für jede Zahl $n \in \mathbb{N}-\{0\}$ existiert ein Wort $w_n \in (\sum_{bool})^n$ so dass
+\begin{center}
+$K(w_n) \geq |w_n| = n$
+\end{center}
+d.h es existiert für jede Zahl n ein nichtkomprimierbares Wort der Länge n
+
+\underline{\textbf{Satz 2.1}} Seien A und B programmiersprachen. Es existiert eine Konstante $c_{A,B}$, die nur von A und B abhängt so dass
+\begin{center}
+$|K_A(x) -K_B(x)| \leq c_{A,B}$
+\end{center}
+für alle $x \in (\sum_{bool})^*$
+
+\underline{\textbf{D2.19:}} Ein Wort $x \in (\sum_{bool})^*$ heisst \textbf{zufällig}, falls $K(x) \geq |x|$. Eine Zahl n heisst \textbf{zufällig}, falls 
+\begin{center}
+$K(n) = K(Bin(n)) \geq \lceil log_2(n+1)\rceil -1$
+\end{center} 
+
+\underline{\textbf{Satz 2.2}} Sei L eine Sprache über $\sum_{bool}$. Sei für jedes $n \in \mathbb{N}-\{0\}, z_n$ das n-te Wort in L bezüglich der kanonischen Ordnung. Wenn ein Programm $A_L$ existiert, das das Entscheidungsproblem $(\sum_{bool},L)$ löst, dann gilt für alle $n\in \mathbb{N}-\{0\}$, dass
+\begin{center}
+$K(z_n) \leq \lceil log_2(n+1) \rceil + c$
+\end{center}
+wobei c eine von n unabhängige Konstante ist.
+
+\underline{\textbf{Satz 2.3 (Primzahlsatz)}}  Die Anzahl der Primzahlen wächst so schnell wie die Funktion $\frac{n}{ln(n)}$
+\begin{center}
+$\lim\limits_{n \to \infty} \frac{Prim(n)}{\frac{n}{ln(n)}} = 1$
+\end{center}
+wobei Prim(n) ist die Anzahl der Primzahlen kleiner gleich n.
+
+\underline{\textbf{L2.6: }} Sei $n_1,n_2,n_3...$ eine steigende unendliche Folge natürlicher Zahlen mit $K(n_i) \geq \frac{\lceil log_2n_i \rceil}{2}$. Für jedes $i \in \mathbb{N}- \{0\}$ sei $q_i$ die grösste Primzahl, die die Zahl $n_i$ teilt. Dann ist die Menge:
+\begin{center}
+$Q = \{q_i |i \in \mathbb{N} -\{0\}\}$
+\end{center}
+unendlich. L2.6 zeigt dass es unendlich viele Primzahlen gibt und auch dass die Menge der grössten Primzahlfaktoren einer beliebigen unendlichen FOlge natuürlicherZahlen mit nichtrivialer Kolmogorov Komplexität unendlich ist. 
+
+\underline{\textbf{Satz 2.4}} Für unendlich viele $k \in \mathbb{N}$ gilt
+\begin{center}
+$Prim(k) \geq \frac{k}{2^{17}log_2(k) \cdot (log_2(log_2(k)))^2}$
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

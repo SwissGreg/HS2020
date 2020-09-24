@@ -1,0 +1,490 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{fixltx2e}
+\geometry{a4paper, margin=1in}
+\title{Numerical Methods\\Summary}
+\begin{document}
+	\maketitle
+	\newpage
+
+
+\chapter{Computing with Matrices and Vectors}
+
+\textbf{\underline{Elementary Operations:}} +,-,*,$\backslash,$ lowest level of real arithmetic available on computers usually implemented in hardware\\
+\textbf{\underline{Elementary Linear Algebra operations:}} The next level real arithmetic which is the computation on finite arrays of real numbers\\
+\textbf{\underline{Complex Algorithms:}} involves iterations and approximations 
+
+\section{Fundamentals}
+
+$\mathbb{K}$ notation for a generic field of numbers i.e from $\mathbb{R}$ or $\mathbb{C}$
+
+\underline{\textbf{Vectors:}} one-dimensional array of real/complex numbers, the default for this lecture are column vectors:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 50mm]{Num1.png}
+\end{figure}
+\textbf{Unless stated otherwise, in mathematical formulas vector components are indexed from 1}
+
+\textbf{Notations:}
+\begin{itemize}
+\item column vectors: bold small roman letters e.g \textbf{x,y,z}
+\item row vectors: \textbf{$x^T,y^T,z^T$}
+\item Addressing vector components:
+\begin{center}
+$x =[x_1,...,x_n]^T \rightarrow x_i, i = 1,...,n$\\
+$x \in \mathbb{K}^n \rightarrow (x)_i, i=1,...,n$
+\end{center}
+\item Selecting sub-vectors: $(x)_{k:l} = [x_k,...,x_l]^T,  1 \leq k \leq l \leq n$
+\item j-th unit vector: $(e_j)_i = \sigma_{ij}$ where $sigma_{ij}:=1 \text{ if } i = j$ 0 else (Kronecker symbol)
+\end{itemize}
+
+\section{Software and Libraries}
+
+\paragraph{Eigen:} A header-only C++ template library designed to enable easy, natural and efficient numerical linear algebra
+
+\paragraph{Header-Only} A library is called header-only if the full definitions of all macros functions and classes comprising the library are visible to the compiler in a header file form. Header-only libraries do not need to be separately compiled, packaged and installed in order to be used. All that is required is to point the compiler at the location of the headers, and then include the header files into the application source
+
+\paragraph{Header File form:} Many programming languages and other computer files have a directive, often called inlcude (or copy, import) that causes the contents of a second file to be inserted into the original file. These included files are called copybooks or header files.
+
+
+\textbf{\underline{Eigen Cheet Sheet:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.99\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num2.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.99\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num3.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.99\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num4.png}
+\end{subfigure}
+\end{figure}
+
+The Fundamental type of Eigen is the Matrix. There are two types of matrices:
+\begin{itemize}
+\item \textbf{fixed size:} size known at compile time
+\item \textbf{dynamic:} size known only at run time
+\end{itemize}
+
+\paragraph{Tensor product} A column vector multiplied with a row vector
+\paragraph{Dot Product} Row vector multiplied with a column vector
+
+\section{1.2.3 Matrix Storage Formats}
+
+The entries of a (generic, dense i.e every entry matters) $A \in \mathbb{K}^{m,n}$ are stored in a contiguous linear array of size $m \cdot n$. An exception is structured/sparse matrices i.e matrices which have a certain structure or few non zero entries. \\
+
+By Default Eigen stores matrices in Column major format as all the elements in this format are contiguous in memory. In Row major format the elements of the Matrix are scattered which results in cache misses. Hence Column major format is more efficient  
+
+\underline{Accessing Arrays in Eigen:} 
+\begin{itemize}
+\item A(i) $\rightarrow$  reference to the i-th element of the array
+\item A.data() $\rightarrow$ raw pointer
+\end{itemize} 
+
+We declare a nxn matrix in Eigen like:
+
+\begin{center}
+Eigen:: MatrixXd A = Eigen:: MatrixXd::Random(n,n)
+\end{center}
+
+Row/Col Access (j-th row):
+\begin{center}
+A.row(j)\\
+A.col(j)
+\end{center}
+
+
+\subsection{Raw Pointers}
+
+A pointer is a type of variable. It stores the address of an object in memory and is used to access that object in memory and is used to access that object.\\
+A \textbf{Raw Pointer} is a pointer whose lifetime is not controlled by an encapsulating object . A raw pointer can be assigned the address of another non-pointer variable, or it can be assigned a value of nullptr.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num5.png}
+\end{figure}
+
+
+\section{1.4 Computational Effort} 
+
+Traditional: number of elementary operations\\
+
+Modern: The computational effort involved in a run of a numerical code is only loosely related to the overall execution time on modern computers. It is mainly determined by the memory access pattern and vectorization/pipelining.
+
+\subsection{1.4.1 Asymptotic complexity}
+
+Characterises the worst-case dependence of its computational effort on one or more problem size parameters when these tend to $\infty$\\
+
+\underline{Notation:} Landau-O notation\\
+
+We define the computational effort as Cost(n) = $\mathcal(O)(n^{\alpha}), \alpha > 0 \iff \exists C >0, n_0 \in \mathbb{N}: cost(n)\leq Cn^{\alpha} \forall n > n_0$\\
+
+\underline{Tacit Sharpness assumption:} $cost(n) \neq \mathbb{O}(n^{\beta}), \forall \beta < \alpha$\\
+
+Asymptotic complexity predicts the dependence of runtime on problem size for large problems, because for small problem sizes we can use the caches and hence we do not have the memory access bottleneck. 
+
+\subsection{1.4.2 Computational Cost of basic numerical LA operations}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num6.png}
+\end{figure}
+
+The matrix multiplication is implemented with a triple loop and hence not optimal.\\
+
+A doubly logarithmic plot is scaled logarithmically on the x and y axis. If Cost(n) = $ \mathbb{N}(n^{\alpha})$ then the data points aligned in a doubly logarithmic plot correspond to a straight line.  
+
+\subsection{1.4.3 Tricks to improve complexity}
+\begin{itemize}
+\item \underline{\textbf{Exploit associativity}} 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num7.png}
+\end{figure}
+\item \underline{\textbf{Hidden Summation:}}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num8.png}
+\end{figure}
+\item \underline{\textbf{Reuse of intermediate results}} 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num9.png}
+\end{figure}
+
+\end{itemize}
+
+\section{1.5 Machine Arithmetic and Consequences}
+ 
+Computers can only calculate with finite numbers and hence cannot calculate with real numbers. Computers compute with machine numbers denoted: $\mathbb{M}$ The set M has two properties:
+\begin{itemize}
+\item \underline{\textbf{finite}} I.e there is a lowest and a highest machine number any numbers larger or smaller than these bounds result in overflow/underflow
+\item \underline{\textbf{discrete in $\mathbb{R}$}} hence there are gaps in the Machine numbers. When working in $\mathbb{R}$ our computer must round the numbers such that it can work with them. 
+\end{itemize}
+
+Roundoff will effect any result of a numerical calculation. Hence a result which should be 0 might not be zero. Therefore we cannot test == 0 we must test for relative smallness
+
+\section{1.5.4 Cancellation}
+
+\underline{\textbf{EPS- Errors:}} Max error you  can have in a Machine set of numbers
+
+EPS-sized errors are troublesome because of error amplification.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num10.png}
+\end{figure}
+
+\underline{\textbf{Cancellation:}} Extreme amplification of relative errors duirng the subtraction of numbers of equal size. 
+
+\subsection{Avoiding Cancellation:} Rewrite expressions inequivalent form immune to cancellation.
+For x close to 1 cancellation is harmless.
+  
+\section{Numerical Stability}
+
+\underline{\textbf{Problem}} A function/mapping $F:X \rightarrow Y$ where X is the data space (input) and Y is the result space (output), in this course we usually consider normed Vector space. On $\mathbb{R}^n$ we have vector norms:
+\begin{itemize}
+\item $||.||_2$ Euclidean Norm
+\item $||.||_1$ One Norm (sum of the absolute value)
+\item $||.||_\infty$ Maximum Norm (max value)
+\end{itemize}
+The vector norms induce \textbf{Matrix Norms}.
+\underline{\textbf{D1.5.5.10 Matrix Norm:}} Given vector norms $||.||_x$ and $||.||_y$ on $\mathbb{K}^n \text{ and } \mathbb{K}^m$, respectively, the associated matrix norm is defined by 
+\begin{center}
+$M \in \mathbb{R}^{m,n}: ||M||:= \underset{x \in \mathbb{R}^n\backslash\{0\}}{sup} \frac{||Mx||_y}{||x||_x}$
+\end{center}
+
+Norms are used to understand the size of pertubations.
+
+\underline{\textbf{Stable Algorithm:}} An algorithm $\tilde{F}$ for solving a problem $F:X \mapsto Y$ is \textbf{numerically stable} if for all $x \in X$ its result $\tilde{F}(x)$ (possibly affectedby roundoff) is the exact result for "slightly perturbed" data:
+\begin{center}
+$\exists C \approx 1: \forall x \in X: \exists \tilde{x} \in X: ||x-\tilde{x}||_X \leq Cw(x)EPS||x||_X \wedge \tilde{F}(x) = F(\tilde{x})$
+\end{center}
+Where:
+\begin{itemize}
+\item $\tilde{F}$: Algorithm affected by roundoff
+\item $\tilde{x}$. perturbed data
+\item Cw(x):= number of operations during the execution of the algorithm
+\item EPS:= machine precision
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num11.png}
+\end{figure}
+
+
+The impact of roundoff on a stable algorithm is of the same order of magnitude as the effect of the inevitable perturbations due to rounding the input data. When talking about perturbations we mean relative perturbations.
+
+\underline{\textbf{Sensitive Dependence:}} Given a slight perturbation the result varies largely:
+\begin{center}
+$||F(x) - F(\tilde{x})||$ can be alrge for tiny $||x-\tilde{x}||_x$
+\end{center}
+
+ \chapter{Chapter 2: Direct Methods for Linear Systems of Equations}
+
+\section{Intro and Theory of Linear Systems of Equations (LSE's)} 
+
+\underline{\textbf{LSE:}}
+\begin{center} 
+$A \underline{x} = \underline{b}$
+\end{center}
+  where:
+\begin{itemize}
+\item $A \in \mathbb{K}^{n,n}$ a square system/coefficient matrix
+\item $\underline{x} \in \mathbb{K}^n$
+\item $\underline{b} \in \mathbb{K}^n$
+
+\end{itemize}
+A being a square matrix is important, because this ensures that the number of equations is equal to the number of unknowns
+
+\section{ Square LSE}
+
+\subsection{Existence and uniqueness of solutions}
+
+\begin{enumerate}
+\item If A is invertible (regular) :
+\begin{center}
+$ Ax = b \iff \underline{x} = A^{-1}\underline{b}$
+\end{center}
+\textbf{Do not use matrix inversion to solve LSE with numerical libraries}\\
+A matrix $A \in \mathbb{K}^{n,n}$ is regular $\iff$:
+\begin{itemize}
+\item $detA \neq 0$
+\item columns of A are linearly independent
+\item rows of A are linearly independent
+\item $N(A) = \{z \in \mathbb{K}^{n}: A\underline{z} = \underline{0}\} = \{\underline{0}\}$
+\end{itemize}
+\end{enumerate}
+
+
+\section{Theory: Linear Systems of Equations}
+
+\subsection{ Sensitivity/conditioning of LSE}
+
+\underline{\textbf{Sensitivity:}} Quantities how small (relative) perturbation of data lead to changes of the output
+
+\underline{\textbf{Vector Norms $\&$ (induced) Matrix norms $|| . ||$}}
+\begin{itemize}
+\item $||M|| = \underset{\underline{x} \neq 0}{sup} \frac{||M\underline{X}}{||\underline{x}||} \Rightarrow ||M\underline{x}|| \leq ||M||\cdot||\underline{x}||$
+\item $||\underline{x} + \underline{y}|| \leq ||\underline{x}||+ ||\underline{y}||$
+\item $||\underline{y} - \underline{y}|| \geq ||\underline{x}|| - ||\underline{y}||$
+\end{itemize}
+
+\textbf{Sensitivity strongly depends on the choice of norms}
+
+\underline{\textbf{Lemma 2.2.2.5 Perturbation lemma}}
+\begin{center}
+$B \in \mathbb{R}^{n,n}, ||B|| < 1 \Rightarrow I + B$ regular $\wedge ||(I+B)^{-1}|| \leq \frac{1}{1-||B||}$
+\end{center}
+
+\underline{\textbf{T 2.2.2.4 Conditioning of LSE's}} If A is regular, $\parallel \Delta A \parallel < \parallel A^{-1} \parallel^{-1}$ and (2.2.2.3), then 
+\begin{itemize}
+\item A + $\Delta$ A is regular/invertible
+\item 
+\begin{center}
+$\frac{\parallel x - \Delta x \parallel}{\parallel x \parallel} \leq \frac{\parallel A^{-1}\parallel \cdot \parallel A \parallel}{1- \parallel A^{-1}\parallel \parallel A \parallel \cdot \frac{\parallel \Delta A \parallel}{\parallel A \parallel}}\cdot \big( \frac{\parallel \Delta b \parallel}{\parallel b \parallel} + \frac{\parallel \Delta A \parallel}{\parallel A \parallel} \big)$
+\end{center}
+where:
+\begin{itemize}
+\item $\frac{\parallel x - \Delta x \parallel}{\parallel x \parallel}$ is the relative error of the result 
+\item $\big( \frac{\parallel \Delta b \parallel}{\parallel b \parallel} + \frac{\parallel \Delta A \parallel}{\parallel A \parallel} \big)$ are the relative perturbations
+\end{itemize}
+
+\end{itemize}
+
+\underline{\textbf{D 2.2.2.7 Condition number of a matrix}}
+\begin{center}
+$Cond(A) := \parallel A^{-1} \parallel \cdot \parallel A \parallel$
+\end{center}
+\begin{itemize}
+\item \textbf{LSE: Well conditioned} $Cond(A) \approx 1$
+\item \textbf{LSE: Ill-conditioned} $Cond(A) >> 1$
+\end{itemize}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{Num11.png}
+\end{figure}
+
+\begin{center}
+cond(A)$>>$ 1 $\iff$ columns/rows of A "almost linearly dependent"
+\end{center}
+\section{2.3-2.5: Gaussian Elimination}
+
+\underline{\textbf{Gauss Elim:}} Successive row manipulation of LSE $A\underline{x} = \underline{b}$ to convert it to triangular form. It consists of 2 steps:
+\begin{enumerate}
+\item \textbf{forward elimination:} $\mathcal{O}^3$
+\item \textbf{back substitution:} $\mathcal{O}^2$
+\end{enumerate}  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{C++}
+
+\section{Templates and Template Classes in C++} 
+
+\paragraph{Templates:} Let you define the behavior of the class without actually knowing what datatype will be handled by the operations of the class i,e a templated class does not depend on the datatype it deals with. The basic syntax for declaring a templated class:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{cpp1.png}
+\end{subfigure}
+\end{figure}
+$a\_$type is not a keyword, its an identifier that during the execution of the program will represent a single datatype\\
+
+When defining a function as a member of a templated class, it is necessary to define it as a templated function
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{cpp2.png}
+\end{subfigure}
+\end{figure}
+
+\underline{\textbf{specialization:}} An instantiated object of a templated class\\
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{cpp3.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{cpp4.png}
+\end{subfigure}
+\end{figure}
+
+\paragraph{Keyword: typename} In a template declaration "typename" can be used as an alternative to class to declare type template parameters
+\section{Scope Resolution Operator "::"}
+
+The scope Resolution Operator is used for one of the following:
+
+\begin{itemize}
+\item Access the global variable, if there is a local variable with the same name
+\item Define a function outside the class
+\item Access a class's static variable
+\item Multiple Inheritance
+\item Refer to a class inside another class
+\end{itemize}
+
+\section{Namespaces}
+
+Namespaces provide a method for preventing name conflicts in large projects. Symbols declared inside a namespace block are placed in a named scope that prevents them from being mistaken for identically-named symbols in other scopes
+
+\paragraph{using-declaration:} 
+\begin{center}
+using $ns\_$name::name
+\end{center}
+Makes the symbol name from the namespace $ns\_name$ accessible for unqualified lookup as if declared in the same class scope, block scope or namespace as where this using-declaration appears
+
+\paragraph{unqualified lookup}
+
+\section{Name Lookup}
+
+The procedure by which a name, when encountered  in a program, is associated with the declaration that introduced
+
+
+\paragraph{Unqualified name lookup} An unqualified name, is a name that does not appear to the right of a scope resultion operator. Name lookup examines the scopes as described below, until it finds at least one declaration of any kind at which time the lookup stops and no further scopes are examined.\\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

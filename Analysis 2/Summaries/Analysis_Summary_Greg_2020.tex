@@ -1,0 +1,112 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{a4paper, margin=1in}
+\title{Analysis II\\Summary}
+\begin{document}
+	\maketitle
+	\newpage
+
+\chapter{Ordinary differential equations}
+\section{Differential Equation:} 
+An equation for a function f that relates the values of f at x, f(x) to the values of its derivatives at the same point x. We distinguish between the number of variables present in the function:
+\begin{itemize}
+\item \underline{\textbf{One variable:}} Ordinary differential equations (ODE)
+\item \underline{\textbf{Several Variables:}} Partial differential equations (PDE)
+\end{itemize}
+
+\underline{Examples:}
+\begin{itemize}
+\item $f'(x) = f(x)$
+\item $f''(x) = -f(x)$
+\end{itemize}
+
+\underline{Notation:} We write $y,y',y'',y^{(3)},...$ instead of $f(x),f'(x),f''(x),f^{(3)}(x)$ 
+
+\textbf{\underline{Order:}} The largest derivative present in the equation. Examples:
+\begin{itemize}
+\item $y' = 2xy$ order 1
+\item $y^{(3)} + 2xy'' + e^xy +1 = 0$ order 3
+\end{itemize}
+
+
+The solution to an ODE is not unique in general. When given initial conditions then we can find unique solutions. E.g:
+\begin{center}
+$y' = x+1$\\
+$y = \frac{x^2}{2} + x + c$
+\end{center}
+is a solution for any c. If we are also given y(0) = 1 then c= 1 is a unique solution.
+
+\section{Linear Differential equations}
+
+A linear ODE of order k on an interval $I \subset \mathbb{R}$ is an eqn of the form:
+\begin{center}
+$y^{(k)} + a_{k-1}(x)y^{(k-1)} + ... + a_1(x)y' + a_0(x)y = b(x)$
+\end{center}
+where a(x) and b(x) are continuous functions from $I \text{ to } \mathbb{C}$.\\
+For a linear ODE the following hold:
+\begin{itemize}
+\item y and all its derivatives appear in order 1
+\item there are no products of the function y  and its derivatives
+\item neither the function nor its derivatives are inside another function e.g $\sqrt{y}$, sin(y),...
+\end{itemize}
+If b = 0 then we say the equation is \textbf{homogeneous} otherwise \textbf{inhomogeneous}\\
+
+
+Solving a linear ODE means finding all functions $f:I \rightarrow \mathbb{C}$ that are k times differentiable such that $\forall x \in  I$ the function satisfies the differentiable equation.
+
+\textbf{\underline{Initial Condition}} A set of equations specifying the values of the derivatives at some initial point. 
+
+\underline{\textbf{Theorem 2.2.3}} Let $I\subset \mathbb{R}$ and open interval $k\geq 1$ and integer. Consider the linear ODE
+\begin{center}
+$y^{(k)} + a_{k-1}(x)y^{(k-1)} + ... + a_1(x)y' + a_0(x)y = b(x)$
+\end{center}
+where coefs $a_i(x), b(x)$ are continous functions
+\begin{enumerate}
+\item Let $S_0$ be the set of solutions for b=0, then $S_0$ is a vector space of dimension k.
+\item For any initial conditions, i.e for any choice of $x_0 \in I$ and $(y_0,...,y_{k-1}) \in \mathbb{C}^k$ there is a unique solution $f \in S$ such that $f_(x_0) = y_0, ... f^{(k)}(x_0)= y_k$
+\item For an arbitrary b the set of solutions of the linear ODE is $S_b = \{f + f_p | f \in S_0\}$ where $f_p$ is one \textbf{particular} solution
+\item For any initial condition there is a unique solution.
+  
+\end{enumerate}
+
+The linearity of the diff equation alsos implies a \textbf{superposition} principle. Suppose we have 2 different functions $b_1(x), b_2(x)$ on the RHS with solutions $f_1,f_2: Df_1 = b_1, Df_2 =b_2$ then $f_1 + f_2$ solves $Df = b_1+b_2$ \\
+
+Given a diff eqn and a possible solution we can always verify whether it is indeed a solution or not. 
+
+\section{Linear differential equations of order 1}
+
+We consider y'+ay = b, where a,b are continous functions. 2 steps:
+\begin{itemize}
+\item Find solutions of the corresponding homogeneous equation y' + ay = 0.
+\item Find a particular solution $f_p:I \rightarrow \mathbb{C}$ such that $f_p + a f_p = b$ 
+\end{itemize}
+
+If f is a solution then so is zf for any constant $z \in \mathbb{C}$
+
+\underline{Homogeneous solution:}
+$y' + ay = 0$\\
+$\Rightarrow y' = -ay$\\
+$\Rightarrow \frac{y'}{y} = a$\\
+$\Rightarrow \int \frac{y'(x)}{y(x)}dx = -\int a(x) dx := A(x)$\\
+$\Rightarrow ln|y(x)| = -A(x) +c$\\
+$\Rightarrow y = z\cdot e^{-A(x)}$ for some constant z\\
+
+\underline{Solution of inhomogeneous equation}
+$y' + ay = b$\\
+There are two methods to solve this:
+\begin{itemize}
+\item Educated guess: the LHS tries to imitate the RHS i.e if b(x) is a polynomial we guess that $f_p$ is also a polynomial or if b is a trig function then we guess $f_p$ is also a trig function
+\item Variation of constants: Assume
+\begin{center}
+$ f_p = z(x)e^{-A(x)}$ 
+\end{center}
+for some function $z:I \rightarrow \mathbb{C}$. We then put this into the equation and see what it forces z(x) to satisfy
+\end{itemize} 
+\end{document}

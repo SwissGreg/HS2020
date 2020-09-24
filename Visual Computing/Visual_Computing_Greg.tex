@@ -1,0 +1,347 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{a4paper, margin=1in}
+\title{Visual Computing\\ Summary}
+
+\begin{document}
+	\maketitle
+	\newpage
+\chapter{The Digital Image}
+
+\section{What is an image:}
+
+\paragraph{\underline{Signal:}} A function depending on some variable with physical meaning
+
+\paragraph{\underline{Image:}} A continuous function. The value can take on physical values. e.g Brightness, temperature, pressure, depth, etc. We distinguish images with:
+\begin{itemize}
+\item \textbf{2 variables:} xy- coordinates
+\item \textbf{3 variables:} xy + time (video)
+\end{itemize}
+Hence an image is a picture or pattern of a value varying in space and/or time.
+\begin{center}
+$f: \mathbb{R}^n \rightarrow S$
+\end{center}
+
+\section{The digital camera}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{VC1.png}
+\end{figure}
+
+
+\paragraph{\underline{The sensor array:}} An array of photosites. Each photosite is a bucket of electrical charge and contain a charge proportional to the incident light intensity during exposure.
+
+\paragraph{\underline{Analog to Digital Conversion:}} The ADC measures the charge and digitizes the result. The conversion happens line by line. The charges in each photosite move down through the sensor array.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 70mm]{VC2.png}
+\end{figure}
+
+Various errors:
+\begin{itemize}
+\item \textbf{Blooming:} The buckets have finite capacity, saturation causes blooming. It happens when a large amount of light gets focused to a single point on your cameras image sensor. This can create so much charge that it actually bleeds from pixel to pixel until it eventually spreads out.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 40mm]{VC3.png}
+\end{figure}
+\item \textbf{Bleeding or Smearing:} During transit buckets still accumulate some charges. The amount is influenced by the time "in transit" versus the integration time
+\begin{figure}[H]
+\centering
+\includegraphics[width = 40mm]{VC5.png}
+\end{figure}
+\item \textbf{Dark Current:} A relatively small electric current that flows through photosensitive devices even when no photons are entering the device.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 40mm]{VC4.png}
+\end{figure}
+\end{itemize}
+
+\paragraph{\underline{CMOS:}} Contains the same sensor elements as CCD but each photo sensor has its own amplifier. the benefits:
+\begin{itemize}
+\item Recent technology
+\item Standard IC technology
+\item Cheap
+\item Low Power
+\item Less sensitive
+\item Per pixel amplification
+\item Random pixel access
+\item Smart pixels
+\item On chip integration with other components
+\end{itemize}
+
+\section{Sampling 1D:}
+
+Sampling in 1D takes a function, and returns a vector whose elements are values of that function at the sample points.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC6.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC7.png}
+\end{subfigure}
+\end{figure}
+\subsection{Reconstruction:} Making samples back into a continuous function. This amounts to guessing what the function did in between the individual samples
+
+\subsection{Undersampling:} Occurs if not enough sampling points are available. It results in a loss of information and can be indistinguishable from other samples e.g undersampling a sin wave:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC8.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC9.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Sampling 2D:}
+
+Sampling in 2D takes a function and returns an array. The array can have infinite dimensions and have negative as well as positive indices.
+
+\subsection{Reconstruction continuous signals:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC10.png}
+\end{subfigure}
+
+\end{figure}
+
+\subsection{ Nyquist Frequency:} Half the sampling frequency of a discrete signal processing system. The signals max frequency (bandwidth) must be smaller than this.
+
+\subsection{ Quantization:} Real valued function gets digital values (integer values). Quantization is lossy i.e the orignial signal cannot be reconstructed anymore. Simple quantization uses equally spaced levels with k intervals:
+\begin{center}
+$ k= 2^b$
+\end{center}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC11.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC12.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC13.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Image Properties:}
+
+\paragraph{\underline{Geometric Resolution:}} How many pixels per area
+
+\paragraph{\underline{Radiometric Resolution:}} How many bits ber pixel
+
+\section{Image Noise}
+
+The different types of common Noise models:
+
+\begin{itemize}
+\item \textbf{\underline{Gaussian noise:}}
+\begin{center}
+$I(x,y) = f(x,y) + c$
+\end{center}
+ where $c \sim N(0,\sigma^2)$ so that 
+\begin{center}
+$p(c) = (2\pi\sigma^2)^{-1}e^{\frac{-c^2}{2\sigma^2}}$
+\end{center}
+
+\item  \textbf{\underline{Poisson noise:}}
+\begin{center}
+$p(k) = \frac{\lambda^k e^{-\lambda}}{k!}$
+\end{center}
+\item \textbf{\underline{Rician noise:}}
+\begin{center}
+$p(I) = \frac{I}{\sigma^2}e^{\frac{-(I^2 + f^2)}{2\sigma^2}}I_0(\frac{If}{\sigma^2}$
+\end{center}
+\item \textbf{\underline{Multiplicative noise:}}
+\begin{center}
+$I = f + fc$
+\end{center}
+\end{itemize}
+
+\paragraph{\underline{Signal to noise ration (SNR)}} An index of image quality:
+\begin{center}
+$s = \frac{F}{\sigma}$ where $F= \frac{1}{XY}\displaystyle\sum_{x=1}^{X}\displaystyle\sum_{y=1}{Y}f(x,y)$
+\end{center}
+
+\paragraph{\underline{Peak Signal to Noise Ration (PSNR)}}
+\begin{center}
+$s_{peak} = \frac{F_{max}}{\sigma}$
+\end{center}
+
+\section{Color Cameras:}
+
+\paragraph{\underline{Prism Color Camera:}} Seperates the light into 3 beams using a dichroic prism
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC14.png}
+\end{subfigure}
+\end{figure}
+\paragraph{\underline{Filter mosaic:}} Filter is coated directly on sensor
+
+\paragraph{\underline{Filter wheel:}} Rotate multiple filters in front of lens. This is only suitable for static scenes.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC15.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Image Segmentation:}
+
+Image segmentation is the concept of partitioning an image into regions of interest.
+
+\paragraph{\underline{Complete Segmentation:}} A finite set of regions $R_1, ..., R_N$, such that
+\begin{center}
+$I = \bigcup\limits_{i=1}^{N}R_i$ and  $R_i \cap R_j = \phi \quad \forall i\neq j$
+\end{center}
+Where I is an image.
+
+\section{Thresholding}
+
+Thresholding is a simple segmentation process which produces a binary image B. It labels each pixel "in" or "out" of the region of interest by comparison of the greylevel with a threshold T:
+\[ 
+B(x,y) =
+\begin{cases}
+1 \quad \text{ if } I(x,y) \geq T\\
+0 \quad \text{ if } I(x,y) < T\\
+\end{cases}
+\]
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC16.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC17.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC18.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC19.png}
+\end{subfigure}
+\end{figure}
+
+\section{ROC Analysis}
+
+ROC = Recieveer Operating Characteristic\\
+
+An ROC curve characterizes the performance of a binary classifier. A binary classifier distinguishes between two different types of things e.g:
+\begin{itemize}
+\item Healthy/afflicted patients 
+\item Pregnancy tests
+\item Object detection
+\item Foreground/background image pixels
+\end{itemize}
+
+\subsection{Classification Error}
+Binary classifiers make errors. There are two inputs to a binary classifier i.e positives and negatives but there are four possible outcomes in any test:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC20.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{ROC Curve}
+Characterizes the error trade-off in binary classification tasks. It plots the TP (True-positive) against the FP (False-positive) fraction
+
+\begin{center}
+TP fraction (sensitivity): $\frac{\text{ True positive count } }{P}$\\
+FP fraction (1-specificity):$ \frac{\text{ False positive count } }{N}$
+\end{center}
+
+An ROC curve always passes through (0,0) and (1,1)\\
+We choose an operating point by assigning a relative costs and values to each outcome:
+\begin{itemize}
+\item $V_{TN}$ Value of true negative
+\item $V_{TP}$ Value of a true positive
+\item $C_{FN}$ Cost of a false negative
+\item $C_{FP}$ Cost of a false positive
+\end{itemize}
+
+We choose the point on the ROC curve with gradient:
+\begin{center}
+$\beta = \frac{N}{P}\frac{V_{TN} + C_{FP}}{V_{TP} + C_{FN}}$
+\end{center}
+For simplicity we often set $V_{TN} = V_{TP} = 0$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC21.png}
+\end{subfigure}
+\end{figure}
+
+
+In reality we use 2-3 seperate sets of test data:
+\begin{enumerate}
+\item \textbf{Training set:} For tuning the algorithm
+\item \textbf{Validation set:} For tuning the performance score
+\item \textbf{Test set:} To get a final performance score on the tuned algorithm
+\end{enumerate}
+
+\section{Pixel Connectivity:}
+
+\paragraph{\underline{Pixel Neighbourhood:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC22.png}
+\end{subfigure}
+\end{figure}
+
+\paragraph{\underline{Pixel Paths:}}
+\begin{itemize}
+\item A 4-connected path between pixels $p_1$ and $p_n$ is a set of pixels $\{p_1,p_2,...,p_n\}$ such that $p_i$ is a 4-neighbour of $p_{i+1}$ i=1,...,n-1
+\item A  8-connected path, $p_i$ is an 8-neighbour of $p_{i+1}$
+\end{itemize}
+
+\paragraph{\underline{Connected Regions:}}
+\begin{itemize}
+\item A region is 4-connected if it contains a 4-connected path between any two of its pixels
+\item A region is 8-connected if it contains an 8-connected path between any two of its pixels
+\end{itemize}
+
+\section{Image Labelling}
+
+\paragraph{\underline{Connected components Labelling:}} Labels each connected component of a binary image with a seperate number
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC23.png}
+\end{subfigure}
+\end{figure}
+
+\paragraph{\underline{Foreground Labelling:}} Only extract the connected components of the foreground
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.5\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC24.png}
+\end{subfigure}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+ \end{document}
