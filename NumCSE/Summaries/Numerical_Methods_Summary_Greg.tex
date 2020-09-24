@@ -309,7 +309,7 @@ $Cond(A) := \parallel A^{-1} \parallel \cdot \parallel A \parallel$
 \end{itemize}
 \begin{figure}[H]
 \centering
-\includegraphics[width = 70mm]{Num11.png}
+\includegraphics[width = 70mm]{Num12.png}
 \end{figure}
 
 \begin{center}
@@ -324,18 +324,38 @@ cond(A)$>>$ 1 $\iff$ columns/rows of A "almost linearly dependent"
 \end{enumerate}  
 
 
+\underline{\textbf{Block Gauss Elim:}}
 
+\underline{Reminder:} Matrix multiplication is not commutative!
 
+Given the LSE $A\underline{x} = \underline{b}$, where $A \in \mathbb{R}^{n,n}$ we split A into blocks where $A_{1,1} \in \mathbb{R}^{n,n}$ and regular. We can then apply Gauss like for scalars with the exception of commutivity
 
+\underline{\textbf{LU-Decomposition}}
 
+equivalent to GE i.e cost(LU) = $\mathcal{O}(n^3)$
 
+\begin{figure}[H]
+\centering
+\includegraphics[width = 120mm]{Num13.png}
+\end{figure}
 
+We can solve a LSE with LU-decomposition using the following steps:
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num14.png}
+\end{figure}
 
+With eigen we can solve LSE with multiple right hand sides i.e we are solving the equation:
+\begin{center}
+$AX = B$ with $X,B \in \mathbb{R}^{n,l}$
+\end{center}
 
-
-
-
-
+\textbf{Eigen:} X = A.lu().solve(B)\\
+Where lu() calculates the LU-decomposition and solve(B) computes the forward and backward substitution for the columns of B
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num15.png}
+\end{figure}
 
 
 
