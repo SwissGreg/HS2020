@@ -27,10 +27,10 @@
 \item $a_n:= \#$ of words which end in 1 with length n and do not contain 11 as a subword.
 \item $b_n:= \#$ of words which end in 0 with length n and do not contain 11 as a subword
 \end{itemize}
-The solution to are task is: $sol_n:= a_n + b_n$
+The solution to our task is: $sol_n:= a_n + b_n$
 We now derive the following two formulas:
 \begin{enumerate}
-\item $b_n = b_{n-1} + a_{n-1} = sol_{n-1}$\\ because we can append a 0 or a 1 to a word of size n-1 which ends in 0.
+\item $b_n = b_{n-1} + a_{n-1} = sol_{n-1}$\\ because we can always append by 0 because it can never make a series into one that contains 11as a subword
 \item $a_n =b_{n-1} = b_{n-2}+a_{n-2} = sol_{n-2}$\\  because words of size n-1 must end in a 0 for us to be able to append a 1
 
 \end{enumerate}
@@ -47,7 +47,7 @@ $\Rightarrow$
 \begin{enumerate}[label = \alph*)]
 \item
 We assume there is a non-empty finite language $L \neq \{\lambda\}$ satisfying $L^2 = L$ and hence it must contain a largest element x according to the canonical ordering.\\
-$\Rightarrow$ by definition of concatination there is an element $x' \in L^2$ such that $ x' = x\cdot x$ (\\
+$\Rightarrow$ by definition of concatination there is an element $x' \in L^2$ such that $ x' = x\cdot x$ \\
 $\Rightarrow$ since $|x'| > |x|$ and x was the largest element in L it follows that $x' \notin L$\\
 $\Rightarrow$ No non-empty finite Language L exists such that $L \neq \{\lambda\}$ and $L^2 = L$
 \item We define the three languages as follows:
@@ -57,12 +57,12 @@ $\Rightarrow$ No non-empty finite Language L exists such that $L \neq \{\lambda\
 \item $L_3 = \{00\}$
 \end{itemize}
 $\Rightarrow  (L_2 \cap L_3) = \{0\} \cap \{00\} = \emptyset$\\
-$\Rightarrow L_1 \cdot \emptyset = \emptyset$\\
+$\Rightarrow L_1 \cdot (L_2 \cap L_3)  = L_1\cdot \emptyset = \emptyset$\\
 $\Rightarrow L_1 \cdot (L_2 \cap L_3)$ is finite\\
 \newline
 $L_1L_2 = L_1^+$ and $L_1L_3 = L_1\backslash\{\lambda,0\}$\\
 $\Rightarrow L_1^+ \cap L_1\backslash\{\lambda,0\} = L_1\backslash\{\lambda,0\}$ \\
-$\Rightarrow L_1\backslash\{\lambda,0\}$ is by definition infinite
+$\Rightarrow L_1\backslash\{\lambda,0\}$ is by definition infinite because an infinite set mimnus a finite set is infinite
 \end{enumerate}
 \item We must prove: An infinite language L is recursive $\iff$ there is an algorithm enumerating L\\
 $"\Rightarrow"$\\
@@ -72,7 +72,7 @@ $\Rightarrow$ There is an algorithm enumerating L
 \newline
 $"\Leftarrow"$\\
 Assume there is an algorithm A which enumerates L\\
-We define an algorithm B which, when given an arbitrary $x \in \sum^*$ goes through the enumeration in canonical order and checks if x is equal to the current element e in the enumeration. If $|x| > |e|$ then B outputs "x not in L". Since $|x| < \infty$, B will terminate in a finite amount of time. If x == e then we output "x in L".\\
+We define an algorithm B which, when given an arbitrary $x \in \sum^*$ goes through the enumeration which is in canonical order and checks if x is equal to the current element e in the enumeration. If $|x| > |e|$ then B outputs "x not in L". Since $|x| < \infty$, B will terminate in a finite amount of time. If x == e then we output "x in L".\\
 $\Rightarrow$ B solves the Decision Problem for L\\
 $\Rightarrow$ L is recursive
 \end{enumerate}

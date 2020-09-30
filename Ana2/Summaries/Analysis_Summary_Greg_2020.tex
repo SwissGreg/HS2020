@@ -71,7 +71,7 @@ where coefs $a_i(x), b(x)$ are continous functions
 \begin{enumerate}
 \item Let $S_0$ be the set of solutions for b=0, then $S_0$ is a vector space of dimension k.
 \item For any initial conditions, i.e for any choice of $x_0 \in I$ and $(y_0,...,y_{k-1}) \in \mathbb{C}^k$ there is a unique solution $f \in S$ such that $f_(x_0) = y_0, ... f^{(k)}(x_0)= y_k$
-\item For an arbitrary b the set of solutions of the linear ODE is $S_b = \{f + f_p | f \in S_0\}$ where $f_p$ is one \textbf{particular} solution
+\item For an arbitrary b the set of solutions of the linear ODE is $S_b = \{f + f_p | f \in S_0\}$ where $f_p$ is one \textbf{particular} solution. $S_b$ is not a vector space. 
 \item For any initial condition there is a unique solution.
   
 \end{enumerate}
@@ -109,4 +109,100 @@ $ f_p = z(x)e^{-A(x)}$
 \end{center}
 for some function $z:I \rightarrow \mathbb{C}$. We then put this into the equation and see what it forces z(x) to satisfy
 \end{itemize} 
+
+
+The same particular solution can also be obtained by the method of \textbf{Integration factor} (IF). Given a ODE of the following form:
+\begin{center}
+$\frac{dy}{dx} + a(x)y = b(x)$
+\end{center}
+one multiplies both sides of the equation by an IF of:
+\begin{center}
+$e^{\int a(x)dx}$
+\end{center}
+$\Rightarrow$
+\begin{center}
+$\frac{dy}{dx}e^{\int a(x)dx} + a(x)ye^{a(x)dx} = b(x)e'{\int a(x) dx}$
+\end{center}
+The left hand side simplifies to:
+\begin{center}
+$\frac{d}{dx}(ye^{\int a(x)dx}) := z(x)$\\
+$\Rightarrow y = z(x)e^{-A(x)}$
+\end{center}
+$\Rightarrow$
+\begin{center}
+$z'(x) = b(x)e^{\int a(x) dx} = b(x) e^{A(x)}$
+\end{center}
+\underline {Example:}
+\begin{center}
+$ x \frac{dy}{dx} -2y = x^2$
+\end{center}
+Assume $x \neq 0$. We now put the equation in the above form.
+\begin{center}
+$\frac{dy}{dx} - \frac{2}{x}y = x$
+\end{center}
+\begin{itemize}
+\item $a(x) = \frac{-2}{x}$
+\item $b(x) = x$
+\item $A(x) = -2\int\frac{1}{x}dx = -2ln(x) = ln(x)^{-2}$
+\item $e^{A(x)} = e^{lnx^{-2}} = \frac{1}{x^2}$
+\end{itemize}
+$z'(x) = b(x) e^{A(x)} = x \cdot \frac{1}{x^2} = \frac{1}{x}$\\
+$\Rightarrow z(x) = ln(x)$\\
+\begin{itemize}
+\item $y_h = ze^{-A(x)} = zx^2$
+\item $y_p =z(x)e^{-A(x)} = ln(x)x^2$
+\end{itemize}
+$\Rightarrow y = y_p +y_h = x^2ln(x) + zx^2$
+
+\section{Linear differential equations with constant coefficients}
+
+ For a linear ODE with constant coefficients
+\begin{center}
+$y^{(k)} + a_{k-1}y^{k-1} + ... + a_0y = 0$
+\end{center}
+The Polynomial
+\begin{center}
+$P(\lambda) = \lambda^{k} + a_{k-1}\lambda^{k-1} + ... + a_0$
+\end{center}
+is called the \textbf{companion/charateristic polynomial} of the equation. The zeroes of $P(\lambda)$ are called the \textbf{eigenvalues}\\
+\underline{Example:}\\
+$y''-y = 0$\\
+$\Rightarrow P(\lambda) = \lambda^2-1 = (\lambda- 1)(\lambda + 1)$\\
+$\Rightarrow$ 2 solutions: $e^{-x},e^{x}$\\
+Any solution of the equation are of the form
+\begin{center}
+$y(x) = z_1e^{-x} + z_2e^{x}$
+\end{center}
+
+\underline{\textbf{Theorem}} let $\lambda_1,...\lambda_r$ be pairwise distince eigenvalues of $P(\lambda)$, characteristic polynomial of 
+\begin{center}
+$(*)\quad y^k + a_{k-1}y^{k-1} + ... + a_0y = 0$
+\end{center}
+with corresponding multiplicities $m_1,...,m_r$ Then the functions
+\begin{center}
+$f_{j,l} :\mathbb{R} \rightarrow \mathbb{C} \quad x \mapsto x^le^{\lambda_jx}$
+\end{center}
+for $1 \leq j \leq r, 0 \leq l < m_j$\\
+form a system of solutions of the homogeneous D.E (*).\\
+\newline
+\underline{Example}
+$y'' -2y' + 1 = 0$\\
+$\Rightarrow P(\lambda) = \lambda^2 - 2 \lambda + 1 = (\lambda -1)^2$\\
+$\Rightarrow \lambda = 1$ has multiplicity of 2\\
+$\Rightarrow$ the solutions are $e^x, xe^x$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \end{document}

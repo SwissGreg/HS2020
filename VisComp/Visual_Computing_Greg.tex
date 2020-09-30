@@ -239,7 +239,7 @@ B(x,y) =
 
 \section{ROC Analysis}
 
-ROC = Recieveer Operating Characteristic\\
+ROC = Reciever Operating Characteristic\\
 
 An ROC curve characterizes the performance of a binary classifier. A binary classifier distinguishes between two different types of things e.g:
 \begin{itemize}
@@ -335,13 +335,221 @@ In reality we use 2-3 seperate sets of test data:
 \end{subfigure}
 \end{figure}
 
+\paragraph{\underline{Region Growing:}} Start from a seed point or region and add neighbouring pixels that satisgy the criteria defining a region, we repeat until we can include no more pixels. 
+There are 3 meaningful variations when considering region Growing:
+\begin{itemize}
+\item Seed Selection i.e from where do we start the region growing
+\item Inclusion criteria 
+\item Boundary constraints and snakes i.e how can the boundary evolve.
+\end{itemize}
+
+\paragraph{Seed selection:} We can select a seed point or region by hand or automatically e.g from a conservative thresholding. Multiple seeds can be chosen aswell. 
+
+\paragraph{Inclusion Criteria:} Until now we have looked at Greylevel thresholding. Another possibility would be to use a Greylevel distribution model. We use a mean $\mu$ and a standard deviation $\sigma$ in the seed region. We include the pixel if:
+\begin{center}
+$(I(x,y) - \mu)^2 < (n\sigma)^2$ 
+\end{center}
+We can update the mean and standard deviation after every iteration.
+
+\paragraph{\underline{snakes}} A snake is an active contour. It is a polygon i.e an ordered set of points joined up by lines. Each point on the contour moves away from the seed while its image neighborhood satisfies an inclusion criterion. contours usually have smoothness constraints. To avoid snakes the algorithm iteratively minimizes an energy function:
+\begin{center}
+$E = E_{tension} + E_{stiffness} + E_{image}$
+\end{center}
+Stiffness and tension are used to keep the region from growing too much and grow in a regular way.
 
 
 
+\paragraph{\underline{Markov Random Fields:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.49\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC25.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC26.png}
+\end{subfigure}
+\end{figure}
+ The Energy Function consists of two terms. The first term is an unary  term i.e only considering the current pixel e.g wether or not the pixel is foreground (F) or background (BG) and the second term is a pairwise term which has 4 possible states: F F, F BG, BG F, BG BG. Usually we favor pixels agreeing with eachother, hence these pixels will have a lower energy. Our goal is to minimize this energy function. One way to solve this is using graph cuts i.e Min-Cut Max Flow
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.49\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC27.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.49\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC28.png}
+\end{subfigure}
+\end{figure}
+We want to find a cut such that all the foreground pixels are connected to one side and the background pixels connected to the other side while minimizing the separation of the two. The cost in the cut in the picture on the right is the pairwise cost of cutting the three boundary edges (3K) and the data cost for labelling each pixel to the source or the sink.\\
+Terminoligy:
+\begin{itemize}
+\item \underline{\textbf{Cut:}} Separates source from sink
+\item \underline{\textbf{Energy:}} Collection of edges
+\item \underline{\textbf{Min Cut:}} Global minimal energy
+\end{itemize}
+The Min-Cut can be found in polynomial time.
+
+\paragraph{\underline{Iterated Graph Cut:}} Given the picture the user picks a rough boundary which contains all of the pixels which belong to the foreground. We look at the 2 distribution of colours inside and outside of the chosen boundary. We then apply \textbf{K-means clustering} which is a method in which we define K clusters and assign each pixel to one of the clusters. After assigning the clusters we check wether or not the cluster fits better to the distribution of the foreground or background and assign it to the corresponding match. The background model can then retrain itself with the newly assigned background pixels to achieve an even tighter foreground model. Using this method it is guaranteed that we saturate at a certain energy level and dont oscillate between values. The saturated energy value is not necissarily a local or global minimium.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC29.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC30.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32  \linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC31.png}
+\end{subfigure}
+\end{figure}
+
+\section{Morphological Operations}
+
+Operations which are purely spatial. Hence we wont use data driven operations. They are local pixel transformations for processing region shapes. Most often used on binary images. Logical transformations based on comparison of pixel neighbourhoods with a pattern.
+Some examples:
+\begin{itemize}
+\item \underline{\textbf{8-neighbour erode (Minkowsky Subtraction)}} if the current pixel has an 8-neighbour which belongs to the background add it to the background.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC32.png}
+\end{subfigure}
+\end{figure}
+\item  \underline{\textbf{8-neighbour dilate (Minkowsky Addition)}} Paint any background pixel that has one eight-connected neighbour that is foreground 
+\end{itemize}
+Morphological Operation are used to smooth region boundaries for shape analysis and can be used to remove noise and artefacts from an imperfect segmentation.
 
 
+\paragraph{\underline{Structuring Elements}}The structuring element is a binary array indicating pixels of interest in a region. A structuring element has an origin. Morphological operations take two arguments
+\begin{itemize}
+\item A binary image
+\item A structuring element
+\end{itemize}
+We compare the structuring element to the neighbourhood of each pixel, this determines the output of the morphological operation.\\    
+We define 3 operations (S is a structuring element) :
+\begin{itemize}
+\item \underline{\textbf{Fitting:}} S fits I at $\underline{x}$ if
+\begin{center}
+$\{y:y = \underline{x} + \underline{s}, \underline{s} \in S\} \subset I$
+\end{center}
+\item \underline{\textbf{Hitting:}}S hits I at $\underline{x}$ if
+\begin{center}
+$\{\underline{y}:\underline{y} = \underline{x} - \underline{s}, \underline{s} \in S\} \cap I  \neq \emptyset$
+\end{center}
+\item \underline{\textbf{Missing:}}S misses I at $\underline{x}$ if
+\begin{center}
+$\{\underline{y}:\underline{y} = \underline{x} - \underline{s}, \underline{s} \in S\} \cap I  = \emptyset$
+\end{center}
+\end{itemize}
 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC33.png}
+\end{subfigure}
+\end{figure}
+The above picture there are 3 regions of interest: upper left, upper right, down center:
+\begin{itemize}
+\item For the upper left region the structuring element origin placed in the center all the ones coincide with the ones in the region
+\item The upper right region demonstrates hits: We place the structuring element origin at all the squares with one e.g the middle square which is 0 is covered by a one in the structuring element and is hence a hit.
+\item The down center image demonstrates a miss. We place the structuring element origin at all the squares with a one but the middle 0 does not get covered with a one and hence its a miss.
+\end{itemize}
 
+\underline{\textbf{Erosion:}} The image $E = I  \ominus S$ is the erosion of image I by structuring element S:
+\[
+E(\underline{x}) =
+\begin{cases}
+1 \quad \text{if S fits I at } \underline{x}\\
+0 \quad \text{ otherwise}
+\end{cases}
+\]
+ \begin{center}
+$E =\{x:x + s \in I \text{ for every } s \in S\}$
+\end{center}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC34.png}
+\end{subfigure}
+\end{figure}
 
+\underline{\textbf{Dilation:}} The image $D = I  \oplus S$ is the dilation of image I by structuring element S:
+\[
+D(\underline{x}) =
+\begin{cases}
+1 \quad \text{if S hits I at } \underline{x}\\
+0 \quad \text{ otherwise}
+\end{cases}
+\]
+ \begin{center}
+$D =\{\underline{x}:\underline{x} - \underline{ s},\underline{y} \in I \text{ and } \underline{s}  \in S\}$
+\end{center}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC35.png}
+\end{subfigure}
+\end{figure}
 
+\underline{\textbf{Opening}} The opening of I by S is 
+\begin{center}
+$I \circ S = (I \ominus S) \oplus S$
+\end{center}
+
+\underline{\textbf{Closing}} The closing of I by S is
+\begin{center}
+$I \bullet S =(I \oplus S) \ominus$
+\end{center}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC36.png}
+\end{subfigure}
+\end{figure}
+
+Morphological filtering uses both opening and closing to remove holes in the foreground and islands in the background. The size and shape of the structuring element determine which features survive. In the absence of knowledge about the shape of features to remove, use a circular structuring element.
+
+\underline{\textbf{Granulometry:}} Provides a size distribution of distinct regions or "granules" in the image. We open the image with increasing structuring element size and count the number of regions after each operation. This creates a "morphological sieve". (e.g counting red blood cells)
+
+\underline{\textbf{Hit-and-miss transform}} Searches for an exact match of the structuring element. $H = I \otimes S$ is the hit-and-miss transform of image I by structuring element S. It is a simple form of template matching
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC37.png}
+\end{subfigure}
+\end{figure}
+The $*$ indicates a dont care hence can either be zero or one
+
+\underline{\textbf{Thinning and Thickening}} Defined in terms of the hit-and-miss transform:
+\begin{itemize}
+\item The thinning of I by S is:
+\begin{center}
+$ I \oslash S = I\backslash (I \otimes S)$
+\end{center}
+\item The thickening of I by S is:
+\begin{center}
+$ I \odot S = I \cup (I \otimes S)$
+\end{center}
+\end{itemize}
+We have the following equality:
+\begin{center}
+$I \odot S)^C = I^C \oslash S$
+\end{center}
+In contrast to Erosion and Dilation, Thinning and thickening will stop at some point. Erosion and Dilation will continue until the whole image is either background or forground only. 
+
+\underline{\textbf{Skeletonization and the Medial Axis Transform (MAT):}} The MAT are stick-figure representations of a region $X \subset \mathbb{R}^2$. Essentially what it is, is starting a grassfire at the boundary of the region. The skeleton is the set of points at which two fire fronts meet
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC38.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Medial Axis Transform (MAT):}} Provides an alternative skeleton definition. The skeleton is the union of cneteres of maximal discs within X. A maximal disc is a circular subset of X that touches the boundary in at least two places. The MAT is the skeleton with the maximal disc radius retained at each point.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC39.png}
+\end{subfigure}
+\end{figure}
  \end{document}

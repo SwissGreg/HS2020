@@ -1,4 +1,4 @@
-\documentclass[8pt]{extreport}
+ \documentclass[8pt]{extreport}
 \usepackage{parskip}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -357,52 +357,434 @@ Where lu() calculates the LU-decomposition and solve(B) computes the forward and
 \includegraphics[width = 100mm]{Num15.png}
 \end{figure}
 
+\underline{\textbf{Block LU-Decomposition}}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num16.png}
+\end{figure}
+
+\section{Exploiting Structure when solving Linear Systems}
+
+\underline{\textbf{LSE with arrow matrix:}} An arrow matrix is a matrix with the following form:
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num17.png}
+\end{figure}
+We can solve this LSE with either:
+\begin{itemize}
+\item LU-decomposition resulting in a runtime of $\mathcal{O}(n^3)$
+\item Block GE resulting in a runtime of $\mathcal{O}(n)$
+\end{itemize}
+The second method is faster but more vulnerable to round-off errors i.e it is more instable
+
+\underline{\textbf{LSE subject to low-rank modification:}} Assume Ax = b is easy to solve, because :
+\begin{enumerate}
+\item A has a special structure
+\item LU-dec is available
+\end{enumerate}
+Are goal is to solve $\tilde{A}\tilde{x} = b$ where $\tilde{A}$ arises from A by changing a single entry $(A)_{i^*j^*}$\\
+\begin{center}
+$\tilde{A} = A + uv^T, u,v \in \mathbb{R}^n$
+\end{center}
+Using a modified Block elimination we get the equation:
+\begin{center}
+$\tilde{x} = A^{-1}b - \frac{A^{-1}u(v^H(A^{-1}b)) }{1 +  v^H(A^{-1}u)}$
+
+\end{center}
+The generalization of this formula is given by:
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num18.png}
+\end{figure}
+
+\section{Sparse Linear Systems}
+
+A sparse matrix is characterized by:
+\begin{itemize}
+\item "almost all" entries = 0
+\item for which it is worth while exploiting this fact i.e a 2x2 matrix is not sparse
+\end{itemize}
+Sparse LSE arise in models of large networks where each node is connected to only a few other nodes.
+
+\subsection{Sparse Matrix storage formats}
+
+A storage format should fulfill the following conditions:
+\begin{itemize}
+\item Memory ~ nnz(A) (number of non zero elements in A)
+\item cost (A$\cdot$ vector) ~ nnz(A)
+\item provide easily accessible information about the location of non zero entries
+\end{itemize}
+
+\underline{\textbf[{COO/triplet format:}} Stores A as a list/sequence of tuples (i,j,value)
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num19.png}
+\end{figure}
+
+\underline{\textbf{Compresed row storage (CRS)}}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num20.png}
+\end{figure}
+
+\subsection{Sparse Matrices in Eigen}
+
+default format is CRS
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num21.png}
+\end{figure}
+The challenge is to efficiently initialize the matrix.\\
+Setting random entries is inefficient because it causes massive data movement. Setting an element which was 0 before means we have to insert it in val, update $col_ind$ and$row-ptr$ arrays
+There are two possibilities to fix this:
+\begin{enumerate}
+\item Use intermediate COO/triplet format i.e we initialize with triplets and then convert to CRS format
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num22.png}
+\end{figure}
+\item Use reserve() $\&$ insert(), if nnz per row/column is known ahead of time
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num23.png}
+\end{figure}
+\end{enumerate}
+
+\subsection{Direct Solution of Sparse LSE's}
+
+Assume: System matrix is in sparse matrix format i.e tells the location of the zero entries. Hence can be exploited by sparse elimination techniques.\\
+\underline{Solving a sparse LSE with Eigen}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num24.png}
+\end{figure}
+Sparse elimination can fail because:
+\begin{itemize}
+\item The matrix is not singular
+\item The matrix has an awkward structure
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num25.png}
+\end{figure}
+
+
+In practice when using sophisticated sparse matrix solver libraries the cost of solving Ax= b is $\mathcal{O}((nnz(A))^{\alpha})$ where $\alpha \approx 1.5 - 2.5$
+
+
+\chapter{Direct Methosds for Linear Least Squares Problems}
+
+\underline{\textbf{Overdetermined LSE:}} An LSE with more equations than unknowns i.e $m \geq n$
+
+\section{Overdetermined LiSE's}
+
+\underline{\textbf{Linear parameter estimation in 1D}} We measure 2 quantities connected by a linear physical law
+\begin{center}
+$y = \alpha x + \beta$ for some unknown parameters $\alpha,\beta \in \mathbb{R}$
+\end{center}
+We make n measured pairs i.e $(x_i,y_i) \in \mathbb{R}^2, i = 1,...,n, n>2$ in order to determine $\alpha, \beta$\\
+if the measurements were precise the following linear equations would be satisfied:
+\begin{center}
+$y_i = \alpha x_i + \beta \quad \forall i$
+\end{center}
+this results in and LSE. However the measured values are affected by measurement errors e.g the y's are affected\\
+$\Rightarrow$ The RHS might be perturbed \\
+$\Rightarrow$ The RHS is no longer a solution for the matrix A
+$\Rightarrow$ No solution may exists
 
 
 
+\underline{\textbf{Linear regression: linear parameter estimation}} We are now given the following linear law:
+\begin{center}
+$y = \underline{a}^T\underline{x} + \beta$ with $x,a \in \mathbb{R}^n, \beta \in \mathbb{R} $
+\end{center}
+Measurements:
+\begin{center}
+$(\underline{x}_i,y_i) \in \mathbb{R}^n \times \mathbb{R}, i=1,...,m$
+\end{center}
+Thy system is Overdetermined if $m > n+1$. As in the above example the result might be perturbed and become unsolvable.
+
+\underline{\textbf{Principle in data science:}} You cannot afford not to use every piece of information available
+
+\underline{\textbf{Angles in triangulations}}\\
+
+\underline{Triangulation:} Covering an area in triangles to determine the distance of points.
+
+We have the following pieces of information available:
+\begin{itemize}
+\item Each angle is supposed to be equal to its measured value
+\item The sum of interior angles is $\pi$ for ecery triangle $\rightarrow +\#$triangles extra equations
+\item The sum of angles at an interior node is $2\pi \rightarrow + \#$ interior nodes extra equations
+\end{itemize}
+Hence we have an OD LSE
+
+\section{Least Squares Solution Concepts}
+
+Setting: OD-LSE $A\underline{x} = \underline{b}$
+
+\subsection{Least Squares Solutions: Definition}
+
+A LSQ solution of $A\underline{x} = \underline{b}$ is a vector $x \in \mathbb{R}^n$ that makes the \textbf{residual}:
+\begin{center}
+$r:= \underline{b} - A\underline{x}$
+\end{center}
+as small as possible with respect to the euclidean norm.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num26.png}
+\end{figure}
+
+\underline{Generalization:} $A \in \mathbb{R}^{n,n} regular \Rightarrow Lsq(A,\underline{b}):= \{A^{-1},\underline{x}\}$
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num27.png}
+\end{figure}
+
+\underline{\textbf{Geometric interpretation of least squares solution of $A\underline{x} = \underline{b}$}}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num28.png}
+\end{figure}
+
+$A\underline{x}^*$ is closest to $\underline{b}$ in R(A), $x^*:=LSQ$ sol\\
+$\Rightarrow A\underline{x}^* = \underline{b}_0$ = orthogonal projection of $\underline{b}$ onto R(A)
+
+Geometric intuition: Since there will always be a point closest to b a least squares solution always exists:
+\begin{center}
+$ \forall A \in \mathbb{R}^{m,n}, \underline{b} \in \mathbb{R}^m: lsq(A,b) \neq \emptyset$
+\end{center}
+
+\subsection{Normal Equations}
+
+The vector $x \in \mathbb{R}^n$ is a least squares solution of the linear system of equations:
+\begin{center}
+$Ax = b, A \in \mathbb{R}^{m,n}, b \in \mathbb{R}^{m}$
+\end{center}
+if and only if it solves the \textbf{normal equations (NEQ)}
+\begin{center}
+$A^TAx = A^Tb$
+\end{center}
+From this follows:
+\begin{center}
+$x \in lsq(A,\underline{b}) \iff A^TAx = A^Tb$
+\end{center}
+Proof is as follows:\\
+The residual r is defined as follow: $r:= \underline{b} - A\underline{x}^* \bot R(A) = \{A\underline{y}: \underline{y} \in \mathbb{R}^n\}$\\
+$\Rightarrow$ by the definition of Orthogonality we have:
+\begin{center}
+$(A\underline{y})^T(\underline{b} - A \underline{x}^*) = 0 \quad \forall \underline{y} \in \mathbb{R}^n$
+\end{center}
+$\Rightarrow A^T(b -A\underline{x}^*) = 0$
+\newline
+
+The system matrix of a NEQ is symmetric
 
 
+\underline{\textbf{Kernel and range of $A^TA$}} For $A \in \mathbb{R}^{m,n}, m \geq n holds:
+\begin{center}
+$N(A^TA) = N(A)$\\
+$R(A^TA) = R(A^T)$
+\end{center}
 
+\underline{\textbf{Uniqueness of least squares solutions:}} If $m\geq n$ and $N(A) = \{0\}$ then the linear system of equations
+\begin{center}
+$Ax = b, A \in \mathbb{R}^{m,n}, b \in \mathb{R}. has a unique last squares solution
 
+\end{center}
+\begin{center}
+$ x = (A^TA)^{-1}A^Tb$
+\end{center}
+That can be obtained by solving the normal equations.
+Two things follow from the above Corollary:
+\begin{itemize}
+\item $N(A) = \{0\} \Rightarrow N(A^TA) = \{0\} \Rightarrow A^TA$ is regular
+\item $N(A) = \{0\} \Rightarow A^TA is symettric positive definit
+\end{itemize}
+We know x is a LSQ solution if A fullfills the Full Rank Condition (FRC):
+\begin{center}
+$N(A) = \{0\} \iff rank(A) = n$
+\end{center}
+A failure of FRC indicates to:
+\begin{itemize}
+\item Flawed mathematical model
+\item Useless data
+\end{itemize}
 
+\subsection{Moore-Penrose Pseudoinverse}
 
+\underline{\textbf{Generalized solution of a linear system of equations:}}
+The generalized solution $x^{\dagger} \in \mathbb{R}^n$ of a linear system of equations $Ax = b, \ A \in \mathbb{R}^{m,n}, b \in \mathbb{R}^m$ is defined as:
+\begin{center}
+$x^{\dagger} := argmin \{||x||_2: x \in lsq(A,b)\}$
+\end{center}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num29.png}
+\end{figure}
 
+\underline{\textbf{T3.1.3.6 Formula for generalized solution: }} Given $A \in \mathbb{R}^{m,n}, b \in \mathbb{R}^m$ the generalized solution $x^{\dagger}$ of the linear system of equations $Ax=b$ is given by:
+\begin{center}
+$x^{\dagger} = V(V^{T}A^{T}AV)^{-1}(V^{T}A^{T}b)$
+\end{center} 
+where V is any matrix whose columns form a basis of $N(A)^\bot$
+The Matrix multiplication $V(V^{T}A^{T}AV)^{-1}(V^{T}A^{T})$ is called the Moore-Penrose pseudoinverse $A^\dagger$ and is independent of the choice of V.
 
+\section{Normal Equation Methods}
 
+\underline{\textbf{Symmetric positive definite matrices: }} $M \in \mathbb{K}^{n,n}$ is symmetric (Hermitian) positive definite (s.p.d) if:
+\begin{center}
+$M =M ^H$ and $\forall k \in \mathbb{K}^{n}: x^HMx > 0 \iff x \neq 0$
+\end{center}
+If $x^HMx \geq 0 \quad \forall x \in \mathbb{K}^n$ then M is called \textbf{positive semi-definite}
 
+\underline{\textbf{Algorithm1:}} Normal equation method to solve full-rank least squares problem $Ax=b$
+\begin{enumerate}
+\item Compute regular matrix $C:= A^TA \in \mathbb{R}^{n,n}$
+\item Compute right hand side vector $c:= A^Tb$
+\item Solve s.p.d linear system of equations: Cx = C
+\end{enumerate}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num30.png}
+\end{figure}
 
+\underline{\textbf{Loss of sparsity:}} Only a concern for large m,n. A matrix A being sparse does not imply that $A^TA$ will also be sparse. e.g
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num31.png}
+\end{figure}
 
+We can avoid computing $A^TA$ using the Extended normal equations:
+Idea is to use the residual vector $\underline{r}$ as new unknown and split the equations
+\begin{center}
+$A^TA\underline{x} = A^T\underline{b} \iff A^T(\underline{b} - A \underline{x}) = 0
+\end{center}
+this gives us the following split:
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num32.png}
+\end{figure}
 
+\section{Orthogonal Transformation Methods} 
 
+Like in the GE we want to transform $A\underline{x} = \underline{b} \rightarrow \tilde{A}\underline{x} = \tilde{\underline{b}}$ such that
+\begin{enumerate}
+\item LSQ solution of $ \tilde{A}\underline{x} = \tilde{\underline{b}}$ is "easy to compute"
+\item $lsq(A,\underline{b}) = lsq(\tilde{A},\tilde{\underline{b}})$
+\end{enumerate}
 
+Regarding 1: An easy to compute system for GE is a triangular system, we can use the same approach for this purpose
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num33.png}
+\end{figure}
 
+Regarding 2: We want a linear transformation which preserves the 2-norm
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num34.png}
+\end{figure}
 
+\subsection{Orthogonal Matrices}
+\begin{itemize}
+\item $Q \in \mathbb{K}^{n,n}, n \in \mathbb{N}$ is unitary if $Q^{-1} = Q^H$
+\item $Q \in \mathbb{R}^{n,n}, n \in \mathbb{N}$ is orthogonal if $Q^{-1} = Q^T \iff ||Qx||_2 = ||\underline{x}||_2 \forall x \in \mathbb{R}^n$
+\end{itemize}
+The columns and rows form an Orthonormal base of $\mathbb{R}^n$
 
+\subsection{QR-Decomposition}
 
+Our goal here is to answer whether and how it is possible to find orthogonal transformations that convert any given matrix $A \in \mathbb{R}^{m,n}, m \geq n, rank(A) = n$, to upper triangular form, as required for the spplication of the "equivalence transformation idea" to full-rank linear least squares problems.
 
+\underline{\textbf{Gram-Schmidt orthogonalisation:}}
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num35.png}
+\end{figure}
 
+From the span property in the above image it follows that:
+\begin{center}
+$\exists T \in \mathbb{R}^{n,n} \text{ Upper Triangular }: Q = AT$
+\end{center}
+The inverse of a regular upper triangular matrix is also upper triangular. Hence we have found an upper triangular matrix R defined as:
+\begin{center}
+$R:= T^{-1} \in \mathbb{R}^{n,n}$
+\end{center}
+Such that A=QR.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num36.png}
+\end{figure}
+We then add m-n zero rows to the bottom of R and complement columns of Q to form an orthonormal basis of $\mathbb{R}^m$, which yields an orthogonal matrix $\tilde{Q} \in \mathbb{R}^{m,m}$
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num37.png}
+\end{figure}
+From this follows:
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num38.png}
+\end{figure}
+The economical QR-factorization of $A \in \mathbb{K}^{m,n}, m\geq n$ with Rank(A) = n is unique if we demand $(R_0)_{ii} > 0, i=1,...,n$
 
+\subsection{Computation of QR Decompositions}
 
+Gram-Schmidt is unstable i.e affected by roundoff errors, hence we need better ways to compute the QR Decomposition.
 
+\underline{Idea:} Similar to GE we want to find simple unitary/orthogonal (row) transformations rendering certain matrix elements to zero
 
+\underline{\textbf{Corollary 3.3.3.9}} The product of two orthogonal/unitary matrices of the same size is again orthogonal/unitary.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\underline{\textbf{Householder Reflections:}} A Householder transformation is a linear transformation that describes a reflection about a plane or hyperplane containing the origin. In our case we are using the Householder matrix as orthogonal transformations which step by step convert a matrix into upper triangular form.
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{Num39.png}
+\end{figure}
+The householder matrix is given by:
+\begin{center}
+$H(v) = (I- 2\frac{vv^T}{v^Tv})$
+\end{center}
+H(v) is orthogonal and symmetric. Special for this case is:
+\begin{center}
+$\underline{v} = \underline{a} + sgn(a_1)||a||_2\underline{e}_1$ 
+\end{center}
+We get the following outline for the QR-decomposition using householder matrices:\\
+$Q_{n-1}Q_{n-2}....Q_1A = R$ We know the invers of $Q_i$ is $Q_i^H$ 
+$\Rightarrow$ we define Q:=$Q_1^H....Q_{n-1}^H$ which is orthogonal (C 3.3.3.9)
+$\Rightarrow$ A =QR
+HH-reflections can be applied to any matrices. In practice we do not store the Q matrices, but the v vector, because H(v) can be computed from v alone this allows us to be more efficient.\\
+The computational cost of QR decomposition using Householder matrices is given by:
+\begin{center}
+cost(R-factor of A by Householder transformation) = $\displaystyle\sum_{k=1}^{n-1}2(m-k+1)(n-k) = \mathcal{O}(mn^2)$
+\end{center}
+\underline{\textbf{Householder QR-decomposition in EIGEN:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num42.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Givens Rotations}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num40.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num41.png}
+\end{subfigure}
+\end{figure}
+The advantage of Givens Rotations over Householder reflections is that with Givens we can specifically choose which entries we want to set to zero.
+\underline{\textbf{QR-dec of banded matrices:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Num43.png}
+\end{subfigure}
+\end{figure}
 
 
 
