@@ -7,6 +7,11 @@
 \usepackage{enumitem}
 \usepackage{geometry}
 \usepackage{float}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+
 \geometry{a4paper, margin=1in}
 \title{Analysis II\\Summary}
 \begin{document}
@@ -93,7 +98,7 @@ If f is a solution then so is zf for any constant $z \in \mathbb{C}$
 \underline{Homogeneous solution:}
 $y' + ay = 0$\\
 $\Rightarrow y' = -ay$\\
-$\Rightarrow \frac{y'}{y} = a$\\
+$\Rightarrow \frac{y'}{y} = -a$\\
 $\Rightarrow \int \frac{y'(x)}{y(x)}dx = -\int a(x) dx := A(x)$\\
 $\Rightarrow ln|y(x)| = -A(x) +c$\\
 $\Rightarrow y = z\cdot e^{-A(x)}$ for some constant z\\
@@ -121,7 +126,7 @@ $e^{\int a(x)dx}$
 \end{center}
 $\Rightarrow$
 \begin{center}
-$\frac{dy}{dx}e^{\int a(x)dx} + a(x)ye^{a(x)dx} = b(x)e'{\int a(x) dx}$
+$\frac{dy}{dx}e^{\int a(x)dx} + a(x)ye^{\int a(x)dx} = b(x)e^{\int a(x) dx}$
 \end{center}
 The left hand side simplifies to:
 \begin{center}
@@ -171,7 +176,7 @@ $\Rightarrow P(\lambda) = \lambda^2-1 = (\lambda- 1)(\lambda + 1)$\\
 $\Rightarrow$ 2 solutions: $e^{-x},e^{x}$\\
 Any solution of the equation are of the form
 \begin{center}
-$y(x) = z_1e^{-x} + z_2e^{x}$
+$y(x) = z_1e^{-x } + z_2e^{x}$
 \end{center}
 
 \underline{\textbf{Theorem}} let $\lambda_1,...\lambda_r$ be pairwise distince eigenvalues of $P(\lambda)$, characteristic polynomial of 
@@ -189,7 +194,614 @@ form a system of solutions of the homogeneous D.E (*).\\
 $y'' -2y' + 1 = 0$\\
 $\Rightarrow P(\lambda) = \lambda^2 - 2 \lambda + 1 = (\lambda -1)^2$\\
 $\Rightarrow \lambda = 1$ has multiplicity of 2\\
-$\Rightarrow$ the solutions are $e^x, xe^x$
+$\Rightarrow$ the solutions are $e^x, xe^x$\\
+
+
+If $a_i$'s are real then we consider the real solutions. IF $\alpha = \beta + i\gamma$ is a complex root of $P(\lambda)$ then so is the complex conjugate $\overline{\alpha} = \beta - i \gamma$. Hence 
+
+\begin{center}
+$f_1:= e^{\alpha x} , f_2 = e^{\overline{\alpha x}}$
+\end{center}
+are 2 solutions. We have
+\begin{center}
+$e^{\alpha x} = e^{\beta x} \cdot e^{i\gamma x}= e^{\beta x}[cos(\gamma x) +i sin(\gamma x)]$\\
+$e^{\overline{\alpha}x} = e^{\beta x} \cdot e^{-i\gamma x} = e^{\beta x}[cos(\gamma x) -i sin(\gamma x)]$
+\end{center}
+hence we can replace any solution $af_1 + bf_2$ with a linear combination of
+\begin{center}
+$\tilde{f_1} = e^{\beta x}cos(x)$\\
+$\tilde{f_2} = e^{\beta x}sin(x)$
+\end{center}
+
+\underline{\textbf{Theorem:}} If $y^k + a_{k-1}^{k-1} + ... + a_0y = 0$ has real coefficients, then each pair of complex conjugate roots $\beta_j \pm i \gamma_j$ of $P(\lambda)$ with multiplicity $m_j$ leads to solutions:
+\begin{center}
+$x^le^{\beta_j x}(cos(\gamma_jx) + i sin(\gamma_j x))$
+\end{center}
+for $0 \leq l < m_j$ \\
+Which can then be replaced by the solutions:
+$$ x^le^{\beta_jx}cos(\gamma_jx),x^le^{\beta_jx}sin(\gamma_jx)$$
+\underline{example:}\\
+$y'' + y = 0$\\
+$\Rightarrow P(\lambda) = \lambda^2 +1$
+$\Rightarrow \lambda_{1\backslash 2} = i, -i$ multiplicity 1 \\
+$\Rightarrow y_h(x) = z_1e^{ix} + z_2 e^{-ix}$ which we can convert to real by taking different coefficients\\
+$\Rightarrow = \tilde{z}_1cos(x) + \tilde{z}_2sin(x)$
+
+
+\underline{\textbf{Inhomogeneous equations}} Given
+\begin{center}
+$y^{(k)} + a_{k-1}y^{k-1} + \dots + a_0y = b(x) \quad (\ast)$
+\end{center}
+Goal is to find a particular solution $y_p$. Any solution of $\ast$ will be of the form
+\begin{center}
+$y =y_h + y_p$
+\end{center}
+We have 2 methods to solve this:
+\begin{itemize}
+\item \textbf{Method of undetermined coefficients ("Ansatz" method):}  The solution will be similar to the disturbance function b(x)
+\begin{figure}[H]
+\centering
+\includegraphics[width = 100mm]{ana1.png}
+\end{figure}
+\underline{example:} $b(x) = a\cdot e^{\alpha x}$
+\begin{enumerate}
+\item $y_p = Be^{\alpha x}$ for some B
+\item put $y_p$ into the diff equation $(\ast)$ resulting in conditions on B
+\item Solve for B
+\end{enumerate}
+If b(x) is a linear combination of the above functions then we try the corresponding linear combination of the "Ansatz" functions.\\
+If $\lambda = \alpha + \beta i$ is a zero of the char poly $P(\lambda)$ of multiplicity m, then the "Ansatz" must be multiplied by $x^m$
+\item \textbf{Variation of constants:}\\The idea is to change the constants $z_1,z_2$ into the functions $z_1(x),z_2(x)$ (assuming k =2 i.e $y'' + a_1y' + a_0y = b(x)$). We have
+\begin{center}
+$f_h = z_1f_1 + z_2f_2$
+\end{center}
+for the homogeneous solution where $f_1,f_2$ are linearly independant.
+For $f_p$ we now apply the variation:
+\begin{center}
+$f_p = z_1(x)f_1 + z_2(x)f_2$
+\end{center}
+To determine the 2 unknown functions $z_1(x),z_2(x)$ we define the following equations:
+\begin{center}
+
+$z_1'(x)f_1 + z_2'(x)f_2(x) = 0$\\[0.5em]
+$z_1'(x)f_1' +z_2'(x)f_2'(x) = b$\\
+
+\end{center}
+Which gives us the following System of linear equations:
+\begin{center}
+$\begin{bmatrix}
+f_1 & f_2 \\[0.5em] f_1' & f_2'
+\end{bmatrix} \left(\!\!\!\begin{array}{c} z_1'(x)\\[0.5em] z_2'(x)  \end{array}\!\!\!\right) = \left(\!\!\!\begin{array}{c} 0\\[0.5em] b\end{array}\!\!\!\right)$
+\end{center}
+The Matrix
+\begin{center}
+A = $\begin{bmatrix}
+f_1 & f_2 \\[0.5em] f_1' & f_2'
+\end{bmatrix}$
+\end{center}
+is invertable hence
+\begin{center}
+$\left(\!\!\! \begin{array}{c} z_1'\\ z_2'\end{array} \!\!\!\right) = A^{-1}\left(\!\!\!\begin{array}{c}  0\\ b\end{array} \!\!\!\right)$
+\end{center}
+This gives us the equations for $z_1'(x),z_2'(x)$ we can then integrate and get $z_1(x),z_2(x)$. giving us our particular solution. $y_p = z_1(x)f_1 + z_2(x)f_2$ 
+\end{itemize}
+
+\section{Separation of variables}
+
+A differential equation of first order is called \textbf{separable} if it is of the form
+\begin{center}
+$y' = b(x)g(y)$
+\end{center}
+hence we can seperate the variables x, y i.e all y's on one side and all x's on the other:
+\begin{center}
+$\frac{dy}{dx} = b(x)g(y) \Rightarrow \int\frac{dy}{g(y)} = \int b(x)dx$
+\end{center}
+For any $y_0$ such that $g(y_0) = 0$ the constant function $y = y_0$ is a solution.\\
+\underline{Example:}\\
+\begin{center}
+$e^{2y}y' = x \Rightarrow y' = x\cdot e^{-2y}$
+\end{center}
+Hence x= b(x) and $e^{-2y} =g(y)$. In this case g(y) is never zero since the exp function is never zero.\\
+$\int e^{2y}dy = \int x \ dx$\\
+$\Rightarrow e^{2y} = x^2 + c'$
+$\Rightarrow 2y = log(x^2 + c)$
+$\Rightarrow y = \frac{log(x^2 + c)}{2}$
+
+\chapter{Differential Calculus in $\mathbb{R}^n$}
+
+\underline{\textbf{Polynomials in n variables:}} Given $d \geq 0$ a polynomial in n variables of degree $\leq d$ is a finite sum of "monomials" of degree $e \leq d$\\
+\underline{\textbf{Monomial:}} A monomial of degree e is a function 
+\begin{center}
+$f: \R^ n \to \R \quad (x_1,...,x_n) \mapsto \alpha x_1^{d_1}x_2^{d_2}...x_n^{d_n}$  
+\end{center}
+such that $d_1 + ... + d_n = e$\\
+\underline{Example:}\\
+$P(x,y,z) = x^3 + 2x^2 + yx + xyz + z^4$\\
+with the monomials:
+\begin{itemize}
+\item $x^3$ degree 3
+\item $2x^2$ degree 2
+\item $yx$ degree 2
+\item $xyz$ degree 3
+\item $z^4$ degree 4
+\end{itemize}
+degree of P is 4\\
+\underline{\textbf{Degree of a polynomial:}} The max of the degrees of the monomials in P\\
+
+We can obtain new functions from old ones by:
+\begin{itemize}
+\item cartesian product of 2 functions
+\item Functions with separated variables
+\item Composition of 2 functions
+\end{itemize}
+ 
+
+\underline{\textbf{Continuity in $\R^n$}}
+
+For $$f: \R \to \R$$
+f is continuous at $x_0 \in \R$ if $\forall \epsilon > 0, \exists \delta > 0$ s.t if $|x-x_0| < \delta$ then $|f(x) -f(x_0)| < \epsilon$\\
+Hence for $\R^n$ we also have a distance function. From linear algebra:
+$$ x \in \R^n, x=(x_1,...,x_n) \Rightarrow ||x|| := \sqrt{x_1^2 + ... + x_n^2}$$
+with:
+\begin{itemize}
+\item $\|x \| > 0 \forall x \neq 0$
+\item $\|tx\| = |t|\|x\|$
+\item $\|x + y\| \leq \|x\| + \|y\|$
+\end{itemize}
+
+\underline{\textbf{Convergence}}
+Let $(x_k)_{k\in \N}, x_k \in \R^n$ with $x_k = (x_{k,1},x_{k,2},...,x_{k_n})$\\
+let $y \in \R^n, y =(y_1,..,y_n)$\\
+We say the sequence converges to y as $k \to \infty$. We write $x_k \to y$ or $\lim\limits_{k \to \infty} x_k = y$ if
+$$\forall \epsilon > 0, \exists N \geq 1 \text{ s.t } \forall n \geq N \text{ we have } \|x_k - y \| < \epsilon$$
+This definition is equivalent to:\\
+\begin{itemize}
+
+ \item For each $i, 1 \leq i \leq n$ the sequence $(x_k,i)_k$ of real numbers converge to $y_i$
+\item The sequence of real numbers $\|x_k -y \| converges to 0$  
+\end{itemize}
+
+\underline{\textbf{Limit}}
+let
+$$f: X \subset \R^n \to \R^m, \quad x_0 \in X, y \in \R^m$$
+We say f has a lmit as $x \to x_0$ with $x \neq x_0$ if
+$$ \forall \epsilon > 0, \exists \delta > 0, \text{ s.t } \forall x \in X, x \neq x_0 \text{ such that } \|x-x_0\|_n < \delta, \text{ we have } \|f(x) -y \|_n < \epsilon$$
+We write $\lim\limits_{x \to x_0, x \neq x_0} f(x) = y$\\
+
+\underline{Proposition}\\
+$f:X \subset \R^n \to \R^m, x_0 \in X \subset \R^n, y \in \R^m$
+$$\lim\limits_{x \to x_0}f(x) = y \iff \forall \text{ sequences } (x_k) \text{ in } X \text{ such that } \lim_{x_k}=x_0 \text{ and } x_k \neq x_0 \text{ the sequence } f(x_k) \text{ converge to y }$$
+
+\underline{\textbf{Continuity}}\\
+$f: X \subset \R^n \to \R^m$ let $x_0 \in X$\\
+We say f is continuous at $x_0$ if $\forall \epsilon > 0 \exists \delta > 0$ s.t if $x \in X$ satisfies $\|x-x_0\|_n < \delta$ then $\|f(x) - f(x_0) \| < \epsilon$\\
+f is continuous in X if f is continuous in every point $x_0 \in X$
+For a continuous function f we have:
+$$ \lim f(x_k) = f(\lim x_k)$$
+
+\underline{Examples:}
+\begin{itemize}
+\item Linear Functions
+\item Polynomials
+\item Sums,products of continuous functions are continuous
+\item Functions of separated variables are continuous if the factors are continuous
+\item Composition of continuous functions are continuous
+\end{itemize}
+The discontinuity of functions of 2 variables can be points (e.g $log(x^2+y^2)$) or a collection of curves (e.g $log(cos(x^2+y^2))$\\
+
+\underline{\textbf{WARNING:}} If you start with a continuous function and then fix one of the variables at a constant then you obtain a function that has less variables and it will be continuous but the converse that if you start with a function of 2 variables and you fix one of the variables and you get a continous function does not imply that the original function was continuous.
+
+\underline{Examples}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana2.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.7\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana3.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.7\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana4.png}
+\end{subfigure}
+\end{figure}
+
+\underline{\textbf{Min -max theorem}} If $f:[a,b] \to \R$ with $[a,b]$ a compact interval and continuous, then f takes its max and min. i.e 
+$$ \exists v^{+} \in [a,b] \text{ s.t } f(x) \leq f(v^{+}) \forall x \in [a,b], \exists v^- \in [a,b] \text{ s.t } f(x) \geq f(v^-) \forall x \in [a,b]$$
+
+The we define the analog for $\R^n$
+
+\underline{\textbf{bounded:}} A  subset $X \subset \R^n$ is bounded if the set $\{\|x\| |x \in X\}$ is bounded in $\R$
+
+\underline{\textbf{closed:}} A subset $X \subset \R^n$ is closed if for every sequence $(x_k)_k \subset X$ that converges in $\R^n$, converges to a point $y \in X$\\
+\underline{Example:}\\
+$$(\frac{1}{k})_k \subset (0,1] = X \subset \R$$
+This sequence converges to 0 but 0 is not contained in the X, hence X is not closed.\\
+
+\underline{\textbf{Compact:}} $X \subset \R^n$ if it is closed and bounded.\\
+
+If $X \subset \R^n, Y \in \R^m$ are bounded (resp. closed, resp. compact) then 
+$$ X \times Y = \{(x,y) \in \R^{n+m} | x \in X, y \in Y \}$$
+is bounded (resp. closed, compact) in $\R^{n+m}$\\
+
+
+
+If $f = \R^n \to \R^m$ continuous, then for every $Y \subset \R^m$ closed, the set $f^{-1}(Y) = \{x \in \R^n| f(x) \in Y\} \subset \R^n\}$ is closed. The Inverse image of closed sets under continuous maps are closed.
+
+\underline{Example:}\\
+if $f:\R^n \to \R$ continuous then for any $a \leq b$ 
+$$ X:= \{ x \in \R^n | a \leq f(x) \leq b\}$$
+is closed, $X = f^{-1}([a,b])$
+the same applies to:
+\begin{itemize}
+\item $\{x \in \R^n | f(x) \geq a \}$
+\item $\{x \in \R^n | f(x) \leq b \}$
+\end{itemize}
+
+\underline{\textbf{WARNING:}} If f is continuous then the set
+$$\{x \in \R^n | a \leq f(x) \leq b\}$$
+is not always compact $f^{-1}([a,b])$ the inverse image of a closed interval hence its closed, but it is also the inverse image of the compact interval $[a,b]$. But we can not say that it is compact.\\
+\underline{Example:}
+$f:\R^3 \to \R, \quad (x,y,z) \mapsto sin(xyz)$\\
+$\{(x,y,z) | -1 \leq f(x,y,z) \leq 1 \} = f^{-1}([-1,1]) = \R^3$ closed but not bounded hence not compact\\
+
+\underline{\textbf{Min-Max theorem for functions of several variables}}\\
+Let $x \subset \R^n$ compact set $f:X \to \R$ a continuous function. Then f is bounded and attains its max and min i.e 
+$ \exists x^+ \in X$ and $x^- \in X \text{ s.t }$
+\begin{itemize}
+\item $f(x^+) = sup f(x)$
+\item $f(x^-) = inf f(x)$
+\end{itemize}
+
+\underline{\textbf{Open:}} A set $X \subset \R^n$ is called open if its complement $\R^n\backslash X$ is closed. This is equivalent to 
+$$ \forall x \in X, \exists r > 0 \text{ s.t the set } \{y \in \R^n | \|y-x\| < r \} = B_r(x) \subset X $$
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana5.png}
+\end{subfigure}
+
+\end{figure}
+
+\underline{Examples:}
+\begin{itemize}
+\item $(a,b) \subset \R$ is open
+\item $[a,b) \subset \R$ neither open nor closed
+\item $\R, \emptyset$ both open
+\item $(a_1,b_1) \times (a_2,b_2) \subset \R^2$ is open
+\item Inverse image of open sts under continuous maps are open
+\end{itemize}
+
+\section{Partial derivatives}
+
+Goal is to define the analog of the derivative for $f:\R^n \to R^m$
+which we can then use to say something about 
+\begin{itemize}
+\item how the function changes around a given point
+\item how can we give an approximation to the value of the function $f(x_0 + h)$ if we know $f(x_0)$
+\end{itemize}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana6.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.7\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana7.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.6\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana8.png}
+\end{subfigure}
+\end{figure}
+
+To evaluate partial derivatives of a function $f: \R^n \to \R^m$ with respect to $x_j$ at a point $a = (a_1,...,a_n)$ we differentiate
+$ f(a_1,..a_{j-1}, x_j, a_{j+1},...,a_n)$ with respect to $x_j$ treating all other variables as a constant with respect to $x_j$\\
+\underline{Example  :}\\
+$f: \R^2 \to \R, \quad (x,y) \mapsto (x^2 + xy)sin(y)$\\
+$\Rightarrow \frac{\delta f}{\delta x} = sin(y)(2x+y)$\\
+$\Rightarrow \frac{\delta f}{\delta y} = xsin(y) + (x^2 + xy)cos(y)$\\
+
+\textbf{\underline{Jacobi Matrix:}} Let $X \subset \R^n$ open $f: X \to \R^m$ with partial derivatives on X we write:
+$$f(x) = 
+ \begin{pmatrix}
+  f_1(x) \\ \vdots \\ f_m(x) \\
+ \end{pmatrix} $$
+for any $x \in X$ the matrix
+$$ J_f(x) = \frac{\delta f_i}{\delta x_j} \ \ 1\leq i \leq m, 1 \leq j \leq n$$
+$J_f(x)$ is a matrix of m rows and n columns i.e it is a $m\times n$ Matrix 
+$$f: X \subset \R^n \rightarrow \R^m$$
+It is called the Jacobi matrix of f at point x\\
+
+\textbf{\underline{Gradient}} In the special case $f: X \to \R \quad X \subset \R^n$, the column vector
+$$(\nabla f)(x_0) = 
+ \begin{pmatrix}
+  \frac{\delta f(x_0)}{\delta x_1} \\ \vdots \\\frac{\delta f(x_0)}{\delta x_n}) \\
+ \end{pmatrix} $$
+
+\underline{ properties:}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana9.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana10.png}
+\end{subfigure}
+\end{figure}
+
+
+We can differentiate with respect to the same or another variable once we have already differentiated once.
+$$ \delta_{x_j} (\delta_{x_i}f) = \frac{\delta}{\delta x_j} \cdot \frac{\delta}{\delta x_i} f$$
+\underline{Example:}\\
+$f(x,y,z) = x^3yz^2 + cos(x) + z$\\
+$\frac{\delta f}{\delta x} = 3x^2yz^2 - sin(x)$\\
+$\Rightarrow \frac{\delta}{\delta y}(\frac{\delta f}{\delta x} = 3 x^2z^2$\\
+
+If $f : \R \to \R$ is differentiable at a point $x_0$ then f is continuous at $x_0$. f  continuous at $x_0$ does not imply that f is differentiable at $x_0$\\
+Partial derivatives are not strong enough to take as an anolog of the derivative from the 1-variable case.\\
+
+\underline{\textbf{Well Approximated:}} $f(x) = f(x_0) + f'(x_0)(x-x_0) + R(x,x_0)$ with 
+$$ \lim\limits_{x \to x_0}\frac{R(x,x_0)}{|x-x_0|} = 0$$
+i.e $R(x,x_0)$ goes to zero faster than $|x -x_0|$ as $x \to x_0$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana11.png}
+\end{subfigure}
+
+\end{figure}
+
+$f: \R \to \R$ is differntiable in $x_0$ if it can be well approximated by the affine linear map
+$$L(x) = f(x_0) + f'(x_0)(x-x_0)$$
+when x is near $x_0$
+
+
+\underline{\textbf{Differentiable at $x_0$}} Let $X \subset \R^n$ open $x_0 \in X, f: X \to \R^m$ a function we say f is differntiable at $x_0$ if ther exists a linear map 
+$$U: \R^n \to \R^m$$
+such that 
+$$\lim\limits_{x \to x_0, x\neq x_0} \frac{f(x) - f(x_0) - u(x-x_0)}{\|x - x_0\|} = 0$$
+The linear map $U: \R^n \to \R^m$ is called the \textbf{total differential} of f at $x_0$ and is denoted by
+$$df(x_0) or d_{x_0}f$$
+For $f:\R^n \to \R^m$ the total differential is NOT a number but a linear map!
+
+\underline{\textbf{Directional Derivative:}} Let $f: \R^n \to \R$ be a function and $v \in \R^n$ a vector. When it exists, the limit
+$$D_vf(x) = \lim\limits_{h \to 0}\frac{f(x+hv)-f(x)}{h}$$
+is called the directional derivative of f along v at the point $x \in \R^n$
+$$ D_vf(x) \text{ exists } \iff \text{ the function } \phi: [-\delta, \delta] \to \R \text{ given by } \phi(t) = f(x + tv) \text{ is differentiable at } t = 0$$
+i.e 
+$$\phi'(0) = \lim\limits_{h \to 0} \frac{\phi(h) - \phi(0)}{h} = \lim\limits_{h \to 0} \frac{f(x + hv) - f(x)}{h} = D_vf(x)$$
+We also have 
+$$\frac {d}{\delta f}f(x_0+ t\overline{v})\mid_{t=0} = df(x_0)(v) = J_f(x_0)\cdot v$$
+
+$f:X\subset \R^n \to \R^n$ be differentiable at $x_0 \in X$ then we have 
+\begin{itemize}
+\item f is continuous at $x_0$
+\item f has all partial derivatives at $x_0$ and the matrix represents the linear map $df(x_0) : \R^n \to \R^m ,\quad x \mapsto Ax$
+in the canonical basis is given by the Jacobi matrix of f at $x_0$ i.e
+$$ A = J_f(x_0) =  (\frac{\delta f_i}{\delta x_j}) 1\leq i <\leq m, 1 \leq j \leq n$$
+A is an $m\times n$ matrix
+\item $f,g: X \to \R^n$ are differentiable in $x_0$ then so is f+g and 
+$$ d(f+g)(x_0) = df(x_0) + dg(x_0)$$ 
+the sum of 2 linear maps
+\item If m = 1 and $f,g: \R^n \to \R$ differentiable in $x_0$ then so is $f \cdot g : \R^n \to \R$ and if $g\neq 0$ then also $\frac{f}{g}$ is differentiable in $x_0$
+
+\item If $f: X \subset \R^n  \to \R^m$ has all parital derivatives $\frac{\delta f_i}{\delta x_j}: X \to \R^m$ and if these functions are continuous on X then f is differentiable on X
+\end{itemize}
+
+A linear map $L : \R \to \R$ has the form L(x)=ax sor some $a \in \R$. The Graph of L must go through (0,0). An affine function is a linear function shifted by an amount
+
+We have seen that if the partial derivatives exist in $x_0$ then
+\begin{itemize}
+\item $\not \Rightarrow$ f is differentiable
+\item $\not \Rightarrow$ f is continuous
+\end{itemize}
+But we have
+\begin{center}
+Partial derivatives exist and they are continuous  $\Rightarrow$ f is differentiable
+\end{center}
+
+
+\underline{\textbf{Tangent space at $x_0$ to the graph of f}} $X \subset \R^n$ open, $f: X \to \R^m$ idfferentiable at $x_0$ with the differential
+$$df(x_0) = u = \R^n \to \R^m$$
+The graph of the affine linear approximation
+$$g: \R^n \to \R^m, g(x) = f(x_0) + u(x-x_0)$$
+The graph of g is
+$$ \{(x,y) \in \R^n \times \R^m | y = f(x_0) + u(x-x_0)\}$$
+
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana12.png}
+\end{subfigure}
+
+\end{figure}
+
+\underline{\textbf{Chain Rule}} Let $X \subset \R^n$ open, $Y \subset \R^m$ open and $f:X \to Y, g:Y \to \R^p$ differentiable functions then $g \circ f : X \to \R^p$ is differentiable in X And for any $x_0 \in X$ ist differential is given by the composition
+$$d(g\circ f)(x_0) : X \to \R^p\\ d(g\circ f)(x_0) = dg(f(x_0)) \circ df(x_0)$$
+In particular the Jacobi Matrix of $g \circ f$ at $x_0$  satisfies\\
+$$J_{g \circ f}(x_0) = J_g(f(x_0)) \cdot J_f(x_0)$$
+
+
+\underline{\textbf{Geometric meaning of gradient:}}Let $\overline{v}$ be a unit vector i.e $(\|v\|=1)$ The directional derivative of f in teh direction of $\overline{v}$ at the point $\overline{x_0}$ is given by 
+$$\langle \nabla f(x_0),\overline{v}\rangle = \|\nabla f(x_0) \| \cdot \|v\| cos(\theta)$$
+We maximizie the directional derivative at $x_0$ if we maximize $cos(\theta)$ i.e when $\theta = 0$ i.e in the direction of the gradient.\\
+The gradient is the direction of largest change.
+
+\section{3 important examples of differential functions}
+
+\subsection{Polar coordinates}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana13.png}
+\end{subfigure}
+\end{figure}
+$det(J_f(r, \theta)) = r$
+\subsection{cylindrical coordinates}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana14.png}
+\end{subfigure}
+\end{figure}
+\subsection{Spherical coordinates}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana15.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Change of variables}
+Let $X \subset \R^n$ an open set and $f:X \to \R^n$ differentiable we say f is a change of variables around $x_0$ if there is a radius $\rho >0$ such that the restriction of f to the Ball around $x_0$ of radius $\rho$ 
+$$ B = \{x \in \R^n \mid \|x-x_0\| < \rho \}$$
+so that the image $Y =f(B)$ is open in $\R^n$ and $\exists$ a differential map $g:Y \to B$ such that $f \circ g = id_Y, g \circ f = id_B$ i.e $f\mid_{B_\rho(x_0)}$ is a bijection to the image with a inverse g which is also differentiable
+
+\subsection{Inverse function theorem}
+
+Let $X \subseteq \R^n$ open $f:X \to \R^n$ differentiable if $x_0 \in X$ is such that $det(J_f(x_0)) \neq 0$ i.e $J_f(x_0)$ is invertible then f is a change of variables around $x_0$ Moreover the Jacobian of g at $x_0$ is defined by $J_g(f(x_0))= J_f(x_0)^{-1}$
+
+
+\section{Higher Derivatives}
+
+$X \subset \R^n, f: X \to \R^m$ we say of class $C^1$ if f is differentiable on X and all of its partial derivatives are continuous. The set of such functions we denote
+$$ C^1(X:\R^m)$$
+let $k \geq 2$, we say $f \in C^k$ if it is differentiable and each $\delta_{x_i}f:x \to \R^m$ is of class $C^{k-1}$ The set of such functions we denote
+$$C^k(X, \R^m)$$
+f is \textbf{smooth} or $C^{\infty}$ if $f \in C^k \forall k$\\
+The composition of smooth functions are smooth. \\
+All polynomials,trig functions and exponentials are smooth.
+
+\subsection{ Hessian Matrix }
+For $f \in C^k, k \geq 2$ then the partial derivatives of order $\leq k $ are independant of order of differentiation i.e Mixed partial derivatives up to order k all commute\\
+\underline{Example:}
+If $k = 2, f \in C^2$ then
+$$ \frac{\delta^2 f}{\delta x_i\delta x_j} = \frac{\delta^2f}{\delta x_j\delta x_i}$$
+
+If $f \in C^2( X \to \R), X \subset \R^n$ then the $n\times n$ matrix 
+
+$$ (\frac{\delta^2 f}{\delta_{x_i} \delta_{x_j}}(x_0)) =: Hess_f(x_0)$$
+is called the \textbf{Hessian} of f at $x_0$\\
+Since it is $C^2$ and the order of differentiation does not matter $H =Hess_f(x_0)$ is a symetric matrix $H^T = H$\\
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana16.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana17.png}
+\end{subfigure}
+\end{figure}
+\underline{Notation:} When we are dealing with partial derivatives of higher order we use multi index notation:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana18.png}
+\end{subfigure}
+\end{figure}
+All the eigenvalues of the Hessian matrix are real valued.
+\section{Affine Linear Approximations to f}
+
+The first order approximation to $f:\R^n \to \R \text{ at } \overline{x}_0$
+ is given by:
+$$f(x) = f(\overline{x}_0  + \nabla f(x_0)\cdot(\overline{x} - \overline{x}_0)+ E_1f(x,x_0)$$
+
+\underline{Example:} Find an approximate value for the number
+$$\alpha = \sqrt{(3.03)^2 +(3.95)^2}$$
+$f:\R^2 \to \R, \quad (x,y) \mapsto \sqrt{x^2+y^2}$ at $x_0 =(3,4)$\\
+We have $f(x_0) = 5$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana19.png}
+\end{subfigure}
+\end{figure}
+
+
+ \subsection{Taylor polynomial of f at $x_0$ of order 1}
+
+For $f:\R^n \to \R$
+$$ T_1f(y;x_0):= f(x_0) + \nabla f(x_0)\cdot y$$
+$T_1f(x-x_0,x_0) $gives the first order approximation to f at $x_0$
+
+\subsection{k-th Taylor polynomial of f at $x_0$}
+Let $f:X\subset \R^n \to \R, f\in C^k, x_0 \in X$\\
+The k-the Taylor polynomial of f at $x_0$ is a polynomial in n-variables of degree $\leq k$ given by:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana20.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana21.png}
+\end{subfigure}
+\end{figure}
+
+\section{Critical points and extrema of functions $f: \R^n \to \R$}
+
+\subsection{Local Maxima/Minima}
+
+$f: X \subset \R^n \to \R$ differentiable we say $x_0 \in X$ is a local maximum(min) if we can find a neighbourhood 
+$$B_r(x_0) = \{x \in \R^n \mid \|x-x_0\| < r \}$$
+at $B_r(x_0) \subset X$ and $\forall x \in B_r(x_0), f(x) \leq f(x_0)(\text{ resp } f(x) \geq f(x_0)$
+
+$f: \R \to \R$ if f has a local min or max at $x_0$ then $f'(x_0) = 0$\\
+The same is for mulitvariable functions i.e
+let $X \subset \R^n$ open $f:X \to \R$ is differentiable if $x_0 \in X$ is a local extrema (i.e a min or max) then $\nabla f(x_0) = 0$ i.e
+$$ \frac{\delta f}{\delta x_1}(x_0) = \frac{\delta f}{\delta x_2}(x_0) = ... = \frac{\delta f}{\delta x_n} (x_0) = 0$$
+
+\subsection{Critical Point}
+A point $x_0 \in X$ if $\nabla f(x_0) = 0$\\
+Critical points are candidates for local extrema
+
+\subsection{Saddle Point}
+A critical point which is not a local min or max is called a saddle point
+
+if $f:[a,b] \to \R$ the global extrema of f is either at an interior point $x_0 \in (a,b)$ for which $f'(x_0)=0$ or at $x=a,x=b$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana20.png}
+\end{subfigure}
+\end{figure}
+
+\underline{\textbf{ non-degenerate critical point:}}A critical point $x_0$ of $f\in C^2$  for which $det(Hess_f(x_0)) \neq 0$\\
+
+\subsection{Role of the second derivative}
+ 
+In several veriables, the role of $f''(x_0)$ is played by the $Hess_f(x_0)$
+
+A symmetric matrix A with det(A) $\neq 0$ is
+\begin{itemize}
+\item \underline{\textbf{Positive definite:}} iff $xAx^T >0, \forall x \in \R^n\backslash \{0\}$ i.e all eigenvalues are greater than 0
+\item \underline{\textbf{negative definite:}} iff $xAx^T < 0$ i.e all eigenvalues are less than 0
+\item  \underline{\textbf{Indefinite:}} If A has positive and negative eigenvalues
+\end{itemize}
+
+A symmetric matrix is positive definit iff $i \leq j \leq n, det (A_j) >0$ where $A_j = (a_{kl}) 1 \leq k \leq i, 1 \leq l \leq j$\\
+
+\underline{Theorem:}$f:X\subset \R^n \rightarrow \R, f \in C^2$ Let $x_0$ be a non-degenerate critical point of f i.e ($\nabla f(x_0) = 0, det(Hess_f(x_0)) \neq 0)$ then
+\begin{itemize}
+\item If $Hess_f(x_0) >0$(positive definite) then $x_0$ is a local minimum
+\item If $Hess_f(x_0) <0$(negative definite) then $x_0$ is a local maximum
+\item If $Hess_f(x_0)$ is indefinite then $x_0$ is a saddle
+\end{itemize}
+
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana23.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Degenerate critical point}
+
+A critical point with det($Hess_f(x_0))=0$\\
+We cannot use the above theorem to decide on the nature of $x_0$. We have to decide case by case.
 
 
 
@@ -199,8 +811,218 @@ $\Rightarrow$ the solutions are $e^x, xe^x$
 
 
 
+\chapter{useful equations}
+
+\begin{itemize}
+\item $\sqrt{i} = \pm \frac{1+i}{\sqrt{2}}$
+\item $sin(t) = t + o(t)$ as $t \to 0$
+\item \underline{\textbf{Formula for a tangent plane:}} $z-f(x_0,y_0) = f_x(x_0,y_0)(x-x_0) + f_y(x_0,y_0)(y-y_0)$
+\end{itemize}
 
 
+\chapter{Integration in $\R^n$}
+
+\section{Derivatives and Integrals $f: \R \to \R^n$}
+
+we have $t \mapsto \begin{pmatrix} f_1(t) \\ \vdots \\ f_n(t) \end{pmatrix}$\\
+The derivative of f is simply:
+$$ f'(t) :=\begin{pmatrix} f_1'(t) \\ \vdots \\ f_n'(t) \end{pmatrix}$$
+Similarly the integral of f from a to b is given by:
+$$\int\limits_a^bf(t)dt:= \begin{pmatrix} \int\limits_a^bf_1(t)dt \\ \vdots \\ \int\limits_a^bf_n(t)dt \end{pmatrix}$$  
+
+\section{ Vector Fields }
+Mappings $f: \R^n \to \R^n$\\
+A vectorfield can be visualized in $\R^2$ as follows:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana24.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Curves in $\R^n$}
+
+This is simply the image of a function $\gamma:[a,b] \to \R^n$, where the function $\gamma$, is continous and its piecewise $C^1$ i.e $\exists k > 1$ and a partition $a = t_0 < t_1 ... <t_k = b$ such that $\gamma \mid_{t_j,t_j+1} \in C^1$. In general $\gamma$ is called a \textbf{parameterization} of the curve.\\
+\underline{Examples:}
+\begin{enumerate}
+\item
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana25.png}
+\end{subfigure}
+\end{figure}
+\item\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana26.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana27.png}
+\end{subfigure}
+\end{figure}
+\item\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana28.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana29.png}
+\end{subfigure}
+\end{figure}
+\item\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana30.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana31.png}
+\end{subfigure}
+\end{figure}
+\end{enumerate}
+
+Let $\gamma:[a,b] \to \R^n$ be a parametrization of a curve, let $X \subset \R^n$ be a subset which contains the image of $\gamma$, let $f:X\to \R^n$ a continuous function. The integral
+\begin{center}
+$\int\limits_a^bf(\gamma(t)) \cdot \gamma '(t)dt \in \R$
+\end{center}
+is called the \textbf{\underline{line integral}} of f along $\gamma$\\
+It is denoted by
+$$\lim\limits_\gamma f(s)ds$$
+If $f:=\begin{pmatrix} f_1(x) \\ \vdots \\ f_n(x)\end{pmatrix}, f: \R^n \to \R^n, f_i = \R^n \to \R$, another notation that is used for the line integral is:
+$$ \int f(s)ds = \int  f_1(x)dx_1 + ... + f_n(x)dx_n$$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana32.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana33.png}
+\end{subfigure}
+\end{figure}
+When we reverse the curve, the line integral changes sign.
+
+\section{Properties of the line integral}
+
+\begin{itemize}
+\item Independent of orientation preserving reparametrization of the curve.\\
+i.e if $\gamma : [a,b] \to \R^n$ a $C^1$ curve and let $\tilde{\gamma} : [c,d] \to \R^n$ such that $\tilde{\gamma} = \gamma \circ \phi$ where $\phi:[c,d] \to [a,b]$. $\phi$ is $C^1$ such that $\phi(c) = a, \phi(d) = b$ with $\phi' > 0, \forall t \in [c,d]$, then 
+$$ \int\limits_\gamma fds = \int\limits_{\tilde{\gamma}} fds$$
+\item path concatination preserving.\\
+Let $\gamma_1 :[a,b] \to \R^n, \gamma_2: [c,d] \to \R^n$ 2 paths with $\gamma_1(b) = \gamma_2(c)$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana34.png}
+\end{subfigure}
+\end{figure}
+we define $\gamma_1 + \gamma_2$ as the path formed by concatination of the 2 curves.\\
+$$ \gamma_1 + \gamma_2 := \begin{cases} \gamma_1(t) \quad t \in [a,b] \\ \gamma_2(t-b+c) \quad t \in [b,d + b-c] \end{cases}$$
+then $\int\limits_{\gamma_1 + \gamma_2} f ds = \int\limits_{\gamma_1}fds +\int\limits_{\gamma_2}fds$
+\item Reversal of the path is opposite sign.\\
+if $\gamma:[a,b] \to \R^n$ a path, let $-\gamma:[a,b] \to \R^n$ same path traced in the opposite direction i.e $(-\gamma)(t) := \gamma (a+b-t)$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana35.png}
+\end{subfigure}
+\end{figure}
+
+
+\end{itemize}
+
+\section{Potential of a function f}
+A differentiable scalar field $g: X \subset \R^n \to \R$ such that $\nabla g = f, f: X \to \R^n$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana36.png}
+\end{subfigure}
+\end{figure}
+\underline{Remarks:}
+\begin{itemize}
+\item If n=1, a potential is same as the primitive of f. g is a primitive of f if $g' = f$
+\item If $f:\R \to \R$ is continuous, then f always has a primitive namely $g(x):= \int\limits_a \to x f(t)dt$
+\end{itemize}
+For multivariable functions continuouty is not enough to guarantee the existance of a potential.
+
+\section{Conservative}
+A Line integral of f is independant of the path of integration when it only depends on the end points of the path
+Let $X \subset \R^n, f: X \to \R^n$ be a continous vector field. If for any $x_1,x_2\in X$ the line integral $\int\limits_{\gamma}fds$ is independant of the curve in x from $x_1$ to $x_2$ then we say the vector field f is conservative.
+
+\subsection{Path connected}
+Let $X \subset \R^n$ open X is said to be path connected if for every pair of points $x,y \in X, \exists$ a $C^1$ path $\gamma: (0,1] \to X$ with $\gamma(0) = x, \gamma(1) = y$
+\underline{Examples}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana37.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana38.png}
+\end{subfigure}
+\end{figure}
+the left picture shows sets which are path connected. The right picture shows that the union of those sets is not.
+\subsubsection{Theorem}
+Let f ba a continuous vector field on an open path connected set $X \subset \R^n$, then the following are equivalent
+\begin{enumerate}
+\item f is the gradient of a function $g:X \to \R$ i.e $f = \nabla g$ , g is a potential for f.
+\item the line integral of f is independant of the path between 2 pts i.e if $\gamma_1 [a,b] \to X, \gamma_2:[c,d] \to X$ are 2 curves and both have the same beginning and end points i.e $\gamma_1(a) = \gamma_2(c) = A, \gamma_1(b) = \gamma_2(d) = B$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana39.png}
+\end{subfigure}
+\end{figure}
+\item The line integral of f around any closed curve is 0
+\end{enumerate}
+
+\subsection{Checking if a vector field is conservatice}
+
+Let $X \subset \R^n$ be open $f : X \to \R^n$ a $C^1$ Vector field $f = (f_1,...,f_n)$ if f is conservative then 
+$$ \frac{\delta f_i}{\delta x_j} = \frac{\delta f_j}{\delta x_i}$$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana40.png}
+\end{subfigure}
+\end{figure}
+\textbf{WARNING:} This criteria is necessary but not sufficient to proof that f is conservative. i.e
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana41.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana42.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Star shaped}
+
+A subset $X \subset \R^n$ is called star shaped if $\exists x_0 \in X$ such that $\forall x \in X$, the line segment joining $x_0$ to x is contained in x\\
+\begin{center}
+Convex $\Rightarrow$ starshaped
+\end{center}
+Convex means any 2 points in the vector field can be joined by a line in the set.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana43.png}
+\end{subfigure}
+\end{figure}
+Let X be a star-shaped open subset of $\R^n, f \in C^1$ a vector field such that
+$\frac{\delta f_i}{\delta x_j} = \frac{\delta f_j}{\delta x_i}$ on x $\forall i,j$ then f is conservative
+
+
+\subsection{Curl}
+
+Let $ X \subset \R^3$ open $f:X \to \R^3, C^1$ a vectorfield. Then the curl of f is the vector field on X defined by 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{Ana44.png}
+\end{subfigure}
+\end{figure}
 
 
 

@@ -290,12 +290,12 @@ wobei:
 \item $\delta$ eine Funktion von $Q \times \sum$ nach Q ist, die $\textbf{Übergangsfunktion}$ ($\delta(q,a) = p$ bedeutet, dass M in den Zustand p übergeht, falls M im Zustand q das Symbol a gelesen hat)
 \end{enumerate}
 
-\underline{textbf{Konfiguration:}} von M ist ein Element aus $Q \times \sum^*$  (Wenn M sich in einer Konfiguration $(q,w) \in Q \times \sum^*$ befindet, bedeutet das, dass M im Zustand q ist und noch das Suffix w eines Eingabewortes lesen soll
-\underline{textbf{ Startkonfiguration von M auf x:}} die Konfiguration $(q_0,x) \in \{q_0\} \times \sum^*$ (Die Arbeit (Berechnung) von M auf  mus in der startkonfiguration anfangen)
+\underline{\textbf{Konfiguration:}} von M ist ein Element aus $Q \times \sum^*$  (Wenn M sich in einer Konfiguration $(q,w) \in Q \times \sum^*$ befindet, bedeutet das, dass M im Zustand q ist und noch das Suffix w eines Eingabewortes lesen soll\\
+\underline{\textbf{ Startkonfiguration von M auf x:}} die Konfiguration $(q_0,x) \in \{q_0\} \times \sum^*$ (Die Arbeit (Berechnung) von M auf  mus in der startkonfiguration anfangen)
 
-\underline{textbf{Endkonfiguration: }} Jede Konfiguration aus $Q \times \{\lambda\}$
+\underline{\textbf{Endkonfiguration: }} Jede Konfiguration aus $Q \times \{\lambda\}$
 
-\underline{textbf{ Schritt}} von M ist eine Relation (auf Konfigurationen)
+\underline{\textbf{ Schritt}} von M ist eine Relation (auf Konfigurationen)
 \begin{center}
 $\vdash_M \subseteq (Q \times \sum^*) \times (Q\times \sum^*)$
 \end{center}
@@ -391,9 +391,18 @@ für ein $p \in Q$ (also $\tilde{\delta}_A(q_0,x) = \tilde{\delta}_A(q_0,y) = p 
 \begin{center}
 $xz \in L(A) \iff yz \in L(A)$
 \end{center}
+Wenn man einmal in den Berechnungen auf zwei unterschiedlichen Eingaben, die gleiche Konfiguration erreicht, dann ist der weitere Verlauf beider Berechnungen identisch. Im Fall eines Entscheidungsproblems bedeutet dies, dass entweder beide Eingaben akzeptiert werden oder beide verworfen werden. \\
 
-
-
+Es gibt zwei Methoden zum Bewies von nicht regularität:
+\begin{itemize}
+\item \textbf{Pumping:} Sei L regulär, dann existiert eine Konstante $n_0 \in \mathbb{N}$, so dass sich jedes Wort $w \in \sum^*$ mit $|w| \geq n_0$ in drei Teile y,x und z zerlegen lässt, das heisst $w = yxz$ wobei:
+\begin{enumerate}
+\item $|yx| \leq n_0$
+\item $|x| \geq 1$
+\item entweder $\{yx^kz| k \in \mathbb{N}\} \subseteq L\}$ oder $\{yx^kz | k \in \mathbb{N}\} \cap L = \emptyset$
+\end{enumerate}
+\item
+\end{itemize}
 
 
 

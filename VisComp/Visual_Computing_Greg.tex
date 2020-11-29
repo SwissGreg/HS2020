@@ -552,4 +552,369 @@ In contrast to Erosion and Dilation, Thinning and thickening will stop at some p
 \includegraphics[width = \linewidth,scale = 1]{VC39.png}
 \end{subfigure}
 \end{figure}
+
+\chapter{Convolution and Filtering}
+
+
+\underline{\textbf{Image Filtering}} The modification of pixels in an image based on some function of a local neighborhood of the pixels
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC40.png}
+\end{subfigure}
+\end{figure}
+
+
+\underline{\textbf{Linear Shift-invariant Filtering:}} Modification of pixels based on neighborhood using a linear combination of neighbors. Shift invariant means we do the same for each pixel. With these filters we can:
+\begin{itemize}
+\item Low level image processing operations
+\item smoothing and noise reduction
+\item sharpen
+\item detection and enhancement
+\end{itemize}
+
+\underline{\textbf{Linear Filter:}} L is a linear operation if
+\begin{center}
+$L[\alpha l_1 + \beta l_2] = \alpha L[l_1] + \beta L[l_2]$
+\end{center}
+The output $l'$ of linear image operation is a weighted sum of each pixel in the input I.
+\begin{center}
+$I'(x,y) = \displaystyle\sum_{(i,j) \in N(x,y)} K(x,y;i,j)I(i,j)$
+\end{center}
+Where:
+\begin{itemize}
+\item I is the input image
+\item I' the output,
+\item K the kernel of the operation
+\item N(m,n) is the neighbourhood of (m,n)
+\end{itemize}
+If  the operations are \textbf{shift-invariant} then K does not depend on  (x,y) and we use the same weights everywhere
+
+\section{Correlation}
+
+Linear operation of correlation:
+\begin{center}
+$I' = K \circ I$\\
+$I'(x,y) = \displaystyle \sum_{(i,j) \in N(x,y)} K(i,j)I(x+i,y+j)$
+\end{center}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC41.png}
+\end{subfigure}
+\end{figure}
+
+\section{Convolution}
+
+Convolution is a blurring function. Convolution is a linear operation:
+\begin{center}
+$I' = K \circ I$\\
+$I'(x,y) = \displaystyle \sum_{(i,j) \in N(x,y)} K(i,j)I(x-i,y-j)$
+\end{center}
+
+The difference between Convolution and correlation is that the kernel is reversed. If your kernel is symmetric the Convolution is equivalent to Correlation.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC42.png}
+\end{subfigure}
+\end{figure}
+
+For the edge of the image we have no data, hence applying the filter around the edge will shrink the image. Applying many filters to an image would eventually cause the image to disappear. In order to prevent this we must make some assumptions of the what the filter should apply when at the edge of the image. Possible methods are :
+\begin{itemize}
+\item clip filter
+\item wrap around
+\item copy edge
+\item reflect across edge
+\item vary filter near edge
+\end{itemize}
+
+\section{Separable Kernels} Have the following attribute:
+\begin{center}
+$K(m,n) = f(m)g(n)$
+\end{center}
+Hence the Kernel can be written as the product of 2 vectors.  For a rectangular neighbourhood with size $(2M+1)\ast(2N+1)$
+\begin{center}
+$I'(m,n) = f \cdot (g \cdot I(N(m,n)))$\\
+$I''(m,n) = \displaystyle\sum_{j-=M}^M g(j)\cdot I(m,n-j)$
+\end{center}
+Separating the Kernels has a computational advantage because vector matrix multiplication is more efficient.
+\section{Gaussian Kernel}
+The idea is to have the weight contributions of neighboring pixels proportional to their nearness
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC43.png}
+\end{subfigure}
+\end{figure}
+The constant factor at the front of $G_{\sigma}$ makes the volume sum to 1
+
+\underline{\textbf{Smoothing with Gaussian vs Box Filter}  }
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC44.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC45.png}
+\end{subfigure}
+\end{figure}
+Comparing the two filters, the box image still shows artifacts. The reason being that when applying the box filter convolution on the image we spread out the values such that they get fainter, yet it is still a box, hence we still get a strong edge effect. The fact that the filter itself has strong edges is a problem.
+
+The gaussian kernel is separable and becomes the product of 2 one dimensional gaussians. i.e 
+\begin{center}
+$g(x,y) = g(x)g(y)$
+\end{center}
+The amount of smoothing depends on $\sigma$ and the kernel size.
+The top benefits of the Gaussian smoothing kernel:
+\begin{itemize}
+\item Rotationally symmetric 
+\item Has a single lobe (Neighbors influence decreases monotonically)
+\item Still one lobe in frequency domain (no corruption from high frequencies) 
+\item Simple relationship to $\sigma$
+\item Easy to implement efficiently
+\end{itemize}
+
+\underline{\textbf{Scale Space}} A Convolution of a Gaussian with standard deviation $\sigma$ with itself is a Gaussian with standard deviation of $\sigma\sqrt{2}$. The repeated convolution by a Gaussian filter produces the scale space of an image. 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC46.png}
+\end{subfigure}
+\end{figure}
+
+\underline{\textbf{Differential FIlters:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC47.png}
+\end{subfigure}
+\end{figure}
+We can see that both of these filters average out (sum of the elements = 0), hence in homogeneous parts of the image the response of the filter will be zero. If we sth that is brighter on one side than the other then we will have a larger response. (for vertical edges). The Sobel operator has more weight on the central pixel hence its a smoother response.
+
+\underline{\textbf{High-pass filters}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC48.png}
+\end{subfigure}
+\end{figure}
+For these the highest response is given from isolated pixels surrounded by pixels of high contrast
+
+\underline{\textbf{Filters are templates}} Filter at some point can be seen as taking a dot-product between the image and some vector. Filtering the image corresponds to a set of dot products. Filters look like the effects they are intended to find and will get the largest response to regions which look like the filter
+
+\underline{\textbf{Image Sharpening (Enhancement)}} Increases the high frequency components to enhance edges. Sharpening has the following  structure:
+\begin{center}
+$I' = I + \alpha |k\cdot I|$
+\end{center}
+where k is a high-pass filter kernel and $\alpha$ is a scalar in $[0,1]$
+
+\chapter{Image Features}
+ 
+\section{Template Matching:} Locate an onject, described by a template $t(x,y)$ in the image $s(x,y)$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC49.png}
+\end{subfigure}
+\end{figure}
+We search for the best match by minimizing mean-squared error
+\begin{center}
+$E(p,q) = \displaystyle\sum_{x=-\infty}^{\infty}  \displaystyle\sum_{y=-\infty}^{\infty} [s(x,y) - t(x-p,y-q)]^2$\\
+$=\displaystyle\sum_{x=-\infty}^{\infty}  \displaystyle\sum_{y=-\infty}^{\infty}|s(x,y)|^2 + \displaystyle\sum_{x=-\infty}^{\infty}  \displaystyle\sum_{y=-\infty}^{\infty} |t(x,y)|^2 - 2 \displaystyle\sum_{x=-\infty}^{\infty}  \displaystyle\sum_{y=-\infty}^{\infty} s(x,y)t(x-p.y-q)$
+\end{center}
+In the last equation the terms are constant with the exception of the last one, which has the form of the correlation operator. Hence the problem is equivalent too maximizing area correlation:
+\begin{center}
+$r(p,q) = \displaystyle\sum_{x=-\infty}^{\infty}  \displaystyle\sum_{y=-\infty}^{\infty} s(x,y)t(x-p,y-q) \ast t(-p,-q)$
+\end{center}
+Area correlation is equivalent to convolution of image $s(x,y)$ with-impulse response $t(-x,-y)$.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC50.png}
+\end{subfigure}
+\end{figure} 
+
+\section{Edge detection}
+
+An Edge is a region of strong change in intensity, hence we look for a region with a large gradient. The gradient of an image is the local change of the image. The size of the gradient is given by:
+\begin{center}
+$|grad(f(x,y))| = \sqrt{\frac{\delta f}{\delta x}^2 + \frac{\delta f}{\delta y}^2}$
+\end{center}
+Since we are only interested in finding the edge we do not need to worry about the direction. The following image shows examples of edge detection filters.
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC51.png}
+\end{subfigure}
+\end{figure} 
+The left matrix is the derivative of x and the right is the derivative of y.
+An edge has a sign. Either it can go from bright to dark or dark to bright which have the inverse gradient orientation.
+
+\underline{\textbf{Laplacian operator}} Another method to detect discontiuities i.e edges. We now consider the second derivative.
+\begin{center}
+$\nabla^2f(x,y) = \frac{\delta^2f(x,y)}{\delta x^2} + \frac{\delta^2 f(x,y)}{\delta y^2}$
+\end{center}
+The laplacian operator has the following properties:
+\begin{itemize}
+\item Isotropic (rotationally invariant)
+\item Zero-crossings mark edge location
+\end{itemize}
+We can make a discrete space approximation by convoluting with the 3x3 impulse response:
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC52.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC53.png}
+\end{subfigure}
+\end{figure} 
+The challenge with detecting zero crossing is that images have alot of noise and hence there could be many small oscillations causing zero crossings which we are not interested in. We can reduce some of the noise by blurring the image first (e.g with a gaussian filter).  The Laplacian operator responds equally to strong and weak edges, hence we can also solve this problem by looking at the gradient magnitude (i.e the first derivative), if the magnitude is above a certain value we then mark the zero crossing as an edge.\\
+
+Blurring of an image with Gaussian and Laplacian operator can be combined into a convolution with Laplacian of Gaussian \textbf{(LoG)} operator which has the following form:
+\begin{center}
+$LoG(x,y) = -\frac{1}{\pi \sigma^4}\big[ 1- \frac{x^2 + y^2}{2\sigma^2}\big]e^{-\frac{x^2+y^2}{2\sigma^2}}$ 
+\end{center}
+
+\section{Canny edge detector}
+Works in 5 steps:
+\begin{enumerate}
+\item Smooth image with a Gaussian filter
+\item Compute gradient magnitude and direction of gradient
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC54.png}
+\end{subfigure}
+\end{figure} 
+\item Apply nonmaxima supression to gradient magnitude image
+\item Double thresholding to detect strong and weak edge pixels
+\item Reject weak edge pixels not connected with strong edge pixels 
+\end{enumerate}
+
+We Quantize the edge normal (direction of the edge) to one of four directions
+\begin{itemize}
+\item horizontal
+\item -45$^\circ$
+\item vertical
+\item +45$^\circ$
+\end{itemize}
+For nonmaxima suppression we find the direction of the largest gradient and if  $M(x,y)$ is smaller than either of its neighbors in the edge normal direction then we suppress it otherwise we keep it.
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC55.png}
+\end{subfigure}
+\end{figure} 
+Canny thresholding has the following form:
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC56.png}
+\end{subfigure}
+\end{figure} 
+We discard all the weak edges which arent connected to strong edges.
+
+\section{Hough transform}
+
+Our goal is to fit a straight line or curve to a set of edge pixels. Lines are defined by the following equation:
+\begin{center}
+$y = mx + c$
+\end{center}
+Given a pixel p=(x,y) we can find all parameters m and c such that the line goes through the pixel, we see that these two spaces are symmetric i.e (-c = mx - y) hence the same way a choice of m and c define a line in the x,y space, a choice of x and y will define a line in the parameter space
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC57.png}
+\end{subfigure}
+\end{figure} 
+We now subdivide the (m,c) plane into discrete "bins", and initialize their count to 0. For each edge pixel x,y we draw a line in the parameter space and increment the bin counts along the line. Our goal is to find a line in the (x,y) space, which contains as many lines as possible in the (m,c) space, hence we need to find the bin in the (m,c) space which has the highest count (peak)
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC58.png}
+\end{subfigure}
+\end{figure} 
+The downside to this choice of parameter space is, that if you have a vertical line then it cannot be expressed with this parameter space. Hence we use an alternative parameterization which avoids this infinite slope problem.  
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC59.png}
+\end{subfigure}
+\end{figure} 
+\underline{example:}
+Given an image, we first run edge detection on it, then draw up the edges in the Hough space (seen on the right)
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC60.png}
+\end{subfigure}
+\end{figure} 
+The peaks in the Hough space in the image above are the two sets of orthogonal lines. The length of the line (in pixels) is approximately the number of counts the peak has.
+\underline{\textbf{Circle detection by Hough transform}}
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC61.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{VC62.png}
+\end{subfigure}
+\end{figure} 
+
+\underline{\textbf{Detecting corner points}} When trying to localize a point on an edge it can be difficult because points along the edge could be quite similiar, whereas a corner pixel is different from all its neighbours. Desirable proporties of corner detector are:
+\begin{itemize}
+\item Accurate localization
+\item invariance against shift, rotation,scale, brightness change
+\item Robust against noise, high repeatability
+\end{itemize}
+To find corn
+
+
+
+
+
+
+
+
+\chapter{Fourier Transform}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  \end{document}

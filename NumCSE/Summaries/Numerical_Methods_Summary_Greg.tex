@@ -583,7 +583,7 @@ $\Rightarrow A^T(b -A\underline{x}^*) = 0$
 The system matrix of a NEQ is symmetric
 
 
-\underline{\textbf{Kernel and range of $A^TA$}} For $A \in \mathbb{R}^{m,n}, m \geq n holds:
+\underline{\textbf{Kernel and range of $A^TA$}} For $A \in \mathbb{R}^{m,n}, m \geq$n holds:
 \begin{center}
 $N(A^TA) = N(A)$\\
 $R(A^TA) = R(A^T)$
@@ -591,7 +591,7 @@ $R(A^TA) = R(A^T)$
 
 \underline{\textbf{Uniqueness of least squares solutions:}} If $m\geq n$ and $N(A) = \{0\}$ then the linear system of equations
 \begin{center}
-$Ax = b, A \in \mathbb{R}^{m,n}, b \in \mathb{R}. has a unique last squares solution
+$Ax = b, A \in \mathbb{R}^{m,n}, b \in \mathbb{R}$. has a unique last squares solution
 
 \end{center}
 \begin{center}
@@ -601,7 +601,7 @@ That can be obtained by solving the normal equations.
 Two things follow from the above Corollary:
 \begin{itemize}
 \item $N(A) = \{0\} \Rightarrow N(A^TA) = \{0\} \Rightarrow A^TA$ is regular
-\item $N(A) = \{0\} \Rightarow A^TA is symettric positive definit
+\item $N(A) = \{0\} \Rightarrow A^TA$ is symettric positive definit
 \end{itemize}
 We know x is a LSQ solution if A fullfills the Full Rank Condition (FRC):
 \begin{center}
@@ -660,7 +660,7 @@ If $x^HMx \geq 0 \quad \forall x \in \mathbb{K}^n$ then M is called \textbf{posi
 We can avoid computing $A^TA$ using the Extended normal equations:
 Idea is to use the residual vector $\underline{r}$ as new unknown and split the equations
 \begin{center}
-$A^TA\underline{x} = A^T\underline{b} \iff A^T(\underline{b} - A \underline{x}) = 0
+$A^TA\underline{x} = A^T\underline{b} \iff A^T(\underline{b} - A \underline{x}) = 0$
 \end{center}
 this gives us the following split:
 \begin{figure}[H]
@@ -786,7 +786,7 @@ The advantage of Givens Rotations over Householder reflections is that with Give
 \end{subfigure}
 \end{figure}
 
-
+\subsection{QR-Based Solver for linear least squares problems}
 
 
 

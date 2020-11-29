@@ -1,0 +1,3323 @@
+\documentclass[8pt]{extreport}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{hyperref}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+
+\geometry{a4paper, margin=1in}
+\title{Sysprog\\Summary}
+\begin{document}
+
+	\maketitle
+	\newpage
+\tableofcontents
+ \chapter{Introduction}
+
+\section{Computer arithmetic}
+
+Arithmetic operation have important mathematical properties but we cannot assume all usual mathematical properties, due to finiteness of representations e.g $x^2 \geq 0$ is valid for floats but not for ints and associativity is valid for ints but not for floats.\\
+
+C and C++ dont provide any memory protections:
+\begin{itemize}
+\item Out of bounds array references
+\item Invalid pointer values
+\item Abuses malloc/free
+\end{itemize}
+Besides asymptotic complexity constant factors matter to hence even the exact operation count does not predict performance, Optimization happens at multiple levels e.g algorithms,data representations, procedures and loops.
+
+
+\chapter{ Introduction to C }
+
+\underline{\textbf{\#include }} Takes a file and includes it into the compilation of the current file
+
+\underline{\textbf{return 0 }} In C there are no exceptions, hence to indicate that everything went well we return 0 otherwise we return a non-zero value
+
+\section{Workflow}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s1.png}
+\end{subfigure}\end{figure}
+The steps:
+\begin{itemize}
+\item Edit a file
+\item Get different kinds of c files
+\item c files get compiled into object code, which is machine code which doesnt connect to any part of the program i.e each of the files get compiled in isolation
+\item the linker converts the object files into executables (i.e code which can run)
+\item loading takes the executable and turns it into a running process in memory and in doing so pulls in the last bits of code needed to run.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s2.png}
+\end{subfigure}\end{figure}
+
+\subsection{Questions}
+\begin{itemize}
+
+\item \underline{What is the difference between an object file and an executable} The object contains machine code, typically it only contains part of the program, hence it contains a lot of placeholders (it knows what it needs to do but not how)
+\end{itemize}
+\section{control flow in C}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s3.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s4.png}
+\end{subfigure}
+\end{figure}
+For the switch statement break is needed to leave, otherwise it will continue with the next case, we define a default case which is executed if it doesnt match any cases.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s5.png}
+\end{subfigure}
+\end{figure}
+continue stops the current iteration of the loop and starts with the next iteration. "goto" is a unconditional branch.
+\section{Functions}
+Each function similar to java has:
+\begin{itemize}
+\item Name
+\item Return type
+\item Argument types
+\item Body
+\end{itemize}
+Every C program needs to have a function called main()
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s6.png}
+\end{subfigure}
+\end{figure}
+char *argv[] can be seen as a list of strings. "int argc" indicates how many strings are in the list
+\\
+\underline{\textbf{printf}} printf takes multiple arguments, the first one is a string each $\%$ is replaced with the arguments that follow
+
+\section{Basic Types in C}
+
+\subsection{Declarations}
+Are like java e.g int $my\_int$, double $some\_float$ = 0.123 etc.
+when we declare a variable inside the block, the scope is just the block after the block, the variable disappears, unless we declare it as static. A static variable persists between calls i.e the next time you call the function the variable will keep its value.\\
+Outside a block, the scope is the entire \textbf{program} i.e not just this file but all files that have been compiled in the program. (Called Global Variables). We can limit the scope of a global variable to just the file its in by using static.
+
+\subsection{Integers and floats}
+
+The size of an integer in c i.e the max value it can have depends on the machine you are running on.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s7.png}
+\end{subfigure}
+\end{figure}
+Hence depending on the machine and using large integers the code could have different performance.
+Integers in C are either signed or unsigned. They are signed by default. \\
+Rules for arithmetic on integers and floats:
+\begin{itemize}
+\item Implicit conversion between integer types, i.e adding a larger int and a smaller int results in the sum with bit size of the larger int.
+\item Implicit conversion between floating types
+\item Explicit conversion between any 2 types can be done with casting
+\end{itemize}
+\subsection{C99 extended integer types}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s8.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Booleans}
+
+Booleans in C are also integers. 0 is interpreted as false and anything thats non-zero is interpreted as true. The NOT operator "!" turns zero into a non-zero and vice-versa.\\
+C99 supports a bool type, it is completely option and still an integer. You can use it by:
+$$ \#include <stdbool.h> $$
+In most programming languages we distinguish between statements (things that do stuff, while,if, assignment, etc) and expressions (set of terms which evaluate to a value). In C all statements are also expressions.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s9.png}
+\end{subfigure}
+\end{figure}
+the exit method ends the programm regardless, the argument decides how the programm is stopped.
+
+\subsection{void}
+
+void is type that has no value, and used for functions which dont return a particular value (procedures). Also used for untyped pointers (pointers that point purely to an address i.e just a pointer we dont know whats there)
+
+\subsection{Operators}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s10.png}
+\end{subfigure}
+\end{figure}
+Left to right associativity: A+B+C $\to$ (A+B)+C\\
+Right to left associativity: A+=B+=C $\to$ A+=(B+=C)\\
+Post-increment i++: Take the current value of i, add one to it and return the value it used to be.
+Pre-increment ++i: First add one to i and then return the value of i
+Post/pre-increment works for pointers too.
+
+\subsection{Casting}
+An operator which takes a value of a certain type and returns a value of a completely different type. Bit-representation usually does not change.
+
+\section{Arrays in C}
+
+An array is a finite vector of variables, all the same type. Indexing starts from 0. In an n element array the last element is a[n-1]. In most languages bound checking is done and you get an error when you go out of bounds. In C the compiler \textbf{ does not } check the array bounds!\\
+Multi-dimensional arrays are stored in a contiguous array in row-major.\\
+
+\textbf{\underline{Array initializers:}} Arrays can be initialized when they are defined:
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s11.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Strings}
+C has no real string type, instead a string is an array of char's terminated with null $\backslash0$
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s12.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s13.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{ Representing Integers in C }
+
+\section{ Encodings and operators }
+
+\subsection{Representing Integers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s14.png}
+\end{subfigure}
+\end{figure}
+The negative in binary is the bits inverted + 1.
+
+\subsection{Bit-level operations in C}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s15.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s17.png}
+\end{subfigure}
+\end{figure}
+the contrast logic operations in C:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s16.png}
+\end{subfigure}
+\end{figure}
+Shift Operations
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s18.png}
+\end{subfigure}
+\end{figure}
+In C we do not have different operators for logical and arithmetic shift, if we have a signed int then we do an arithmetic shift, and with unsigned int logical shift
+\section{Integer Ranges}
+
+\subsection{Encoding Integers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s19.png}
+\end{subfigure}
+\end{figure}
+\subsection{Numeric ranges}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s20.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s21.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Signed vs Unsigned in C}
+By default constants are considered to be signed Integers, they are unsigned if they have "U" as a suffix. The bit composition in explicit casting remains the same hence a large unsigned value could be a negative signed value and vice versa. Implicit casting can also occur e.g during assignments or function calls.\\
+When mixing unsigned and signed values in a single expression, signed values are implicitly cast to unsigned (including comparison operators!)
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s22.png}
+\end{subfigure}
+\end{figure}
+
+
+
+\subsection{Sign extension}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s23.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s24.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Integer addition and subtraction in C}
+
+\subsection{Unsigned addition}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s26.png}
+\end{subfigure}
+\end{figure}
+The sum wraps around if the true sum $\geq 2^w$. The properties are:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s27.png}
+\end{subfigure}
+\end{figure}
+this forms a different abelian group than the normal addition
+
+\subsection{Two's complement addition}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s28.png}
+\end{subfigure}
+\end{figure}
+Hence the only difference between Uadd and Tadd is how the result is interpreted. However the overflow is different:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s29.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s30.png}
+\end{subfigure}
+\end{figure}
+The mathemimatical properties of Tadd:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s31.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Integer multiplication in C}
+Multiplication is worse than addition, because the number of extra bits which could be needed is much larger
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s32.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s33.png}
+\end{subfigure}
+\end{figure}
+Unsigned multiplication with addition forms a commutative ring. Signed multiplication is isomorphic algebra to unsigned multiplication and addition. Difference to normal mathematics is that there is no guarantee that the addition of two positive numbers signed numbers is also positive. 
+
+\section{Integer multiplication and division using shifts}
+
+\subsection{ Power of 2 multiply with shift}
+For both signed and unsigned numbers we have:
+$$ u << k \text{ gives } u\cdot 2^k$$
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s34.png}
+\end{subfigure}
+\end{figure}
+Shifting and addition/subtraction are quite simple operations. On the other hand multiplication of random numbers are more expensive. But usually not necessary to write the multiplication explicitly because the compiler writes the multiplications as shifts and additions/subtractions:
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s35.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Unsigned power of 2 divide with shift}
+Same as multiplication but right logical shift where the bits after the binary are truncated. Hence 
+$$ u >> k \text{ gives } \lfloor \frac{u}{2^k} \rfloor$$
+The compiler will rewrite division into shifts and additions aswell.
+
+\subsection{Signed power of 2 divide with shift } 
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s36.png}
+\end{subfigure}
+\end{figure}
+The rounding we want is toward 0. The correct power of 2 division is given by:
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s37.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s38.png}
+\end{subfigure}
+\end{figure}
+When doing a signed division the compiler will do a check if the number is less than zero, if so then it will add the bias and proceed.
+
+\chapter{ Pointers }
+
+Pointers are variables which store a memory address. The Operating system gives each process an address space. The address space contains the virtual memory which is only visible my the process. Memory is byte addressable.
+
+\section{ Loading }
+
+The file is C program is compiled, and we get an executable file, which is what we are actually trying to run. The OS needs to load this file, hence it inspects whats inside, and will load different parts of the programm into different parts of the virtual address space.
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s39.png}
+\end{subfigure}
+\end{figure}
+\section{ Stack }
+The Stack is created at runtime, everytime a procedure is called the stack grows, when a procedure completes the stack shrinks, the stack grows downwards. We keep track where the stack is in memory with the stack pointer.
+
+\subsection{ Stack Frames }
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s40.png}
+\end{subfigure}
+\end{figure}
+The unit of allocation in a stack is a stack Frame. For each instance of a procedure we get a stack frame. The following information is in a stack frame:
+\begin{itemize}
+\item Local variables
+\item Return information
+\item Temporary space
+\end{itemize}
+\subsection{Call Chain example:}
+Given the following call chain:
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s41.png}
+\end{subfigure}
+\end{figure}
+We start with an empty stack, yoo is called first, hence we have a stack frame for yoo. yoo then calls who so we add a stack frame for who on top of the stack. In general whichever procedure youre currently in, that stack frame will be on top of the stack.
+ \begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s42.png}
+\end{subfigure}
+\end{figure}
+The Frame pointer keeps track of the beginning of the Frame, the stack pointer the end of the frame. When we enter the procedure amI, we create a new frame and hence adjust the two pointers.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s43.png}
+\end{subfigure}
+\end{figure}
+For each recursive call of amI we add a stack frame, and when they return we pop the stack. 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s44.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s45.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Pointers}
+
+
+ 
+\subsection{Addresses and $\&$}
+
+
+$\&$ ist the reference operator. Given a variable x, $\&x$ produces the virtual address where the value of x is stored.
+We can use $\%p$ in the printf() method to print the address of x out.
+
+\subsection{Pointers}
+
+Pointers are variables which store memory addresses.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s46.png}
+\end{subfigure}
+\end{figure}
+Pointers can be dereferenced which means that we get the value stored at the memory address of the pointer.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s47.png}
+\end{subfigure}
+\end{figure}
+
+A pointer to a pointer (\textbf{double pointer}) can be initialized as follows $**dp=\&p$ where p is a pointer.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s49.png}
+\end{subfigure}
+\end{figure}
+\subsection{Box and arrow diagrams}
+
+A way to visualize pointers in a program.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s48.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Address Space Layout Randomization}
+
+The Base of the stack will be started at a random address by the OS, hence everytime we run a programm the address of the variables will have a different address. This is done as a security measure.
+
+\subsection{NULL}
+
+ A memory location guaranteed to be invalid. Null is of type "void *". Any attempt to dereference Null results in a segmentation fault. This is useful to dynamically allocate memory.
+
+
+\section{Pointer arithmetic}
+When incrementing the pointer by one the address it points to after depends on the type, in the example below the pointer is an integer pointer, hence we increment by the size of an integer
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s50.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s51.png}
+\end{subfigure}
+\end{figure}
+
+The amount of memory a value takes up depends on the machine and compiler. We can use the methods:
+$$ \text{ sizeof(type)  or sizeof(value)} $$ 
+
+\section{Arrays and Pointers}
+
+An array name in an expression is treated as a pointer to the first element of the array
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s52.png}
+\end{subfigure}
+\end{figure}
+Arrays are not pointers. An array is a collection of homogeneous data elements stored at contiguous memory addresses. A pointer is a variable that stores a memory address
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s53.png}
+\end{subfigure}
+\end{figure}
+In the compiler A[i] is always is rewritten as $*(A+i)$\\
+An array name as a function parameter is a pointers.
+Arrays cannot be renamed:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s54.png}
+\end{subfigure}
+\end{figure}
+The top one doesnt work, because arrays are not pointers.
+The bottom one works because in the method array is a parameter hence its a pointer to the first element and the assignment will work. array2 will be treated as the address of the first element of the array.
+
+\section{Passing by Reference}
+
+\subsection{Pass by value}
+
+By default in C variables are passed by value. That means a copy of the arguments are made.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s55.png}
+\end{subfigure}
+\end{figure}
+When we return swap the frame is popped from the stack, but the values in main have not been modified.
+
+\section{Pass by Reference }
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s56.png}
+\end{subfigure}
+\end{figure}
+
+\section{C Pointer Declarations}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s60.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Dynamic memory allocation}
+
+\textbf{\underline{ static memory allocation:}} Memory is allocated when the program is loaded and deallocated when the program exits. (global variables)
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s57.png}
+\end{subfigure}
+\end{figure}
+\textbf{\underline{ automatic memory allocation:}} allocated when a function is called and deallocated when function returns. We write C code, this gets compiled into an executable. When the compiler sees procedure calls in the code, in assembly it creates instructions which include push and pop instructions which modify the stack pointer which create and deallocate stack frames.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s58.png}
+\end{subfigure}
+\end{figure}
+We want memory that is more dynamic e.g persists across multiple function calls, memory too big to fit on the stack,memory allocation for functions with an unknown return size etc.\\
+The stack size is usually 8MB.
+
+ \underline{\textbf{Dynamically allocated memory:}}
+The program explicitly requests a new block of memory. C requires manual memory management in contrast to other languages which have automatic memory management ( garbage collector). In manual memory management the cod explicitly deallocates memory. This gives us much more control over memory but requires much more care.
+
+\section{The C memory API}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s59.png}
+\end{subfigure}
+\end{figure}
+The return of malloc is a pointer to the beginning of the memory allocation. If you request more memory than is available malloc will return null. malloc returns a void pointer so that we can cast it to the appropriate type later. malloc has no guarantee to how the memory is initialized.\\
+The method calloc() zeros out the requested memory
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s61.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Deallocation}
+
+Deallocation is done with the free method. For each malloc/calloc there must be an appropriate free call
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s62.png}
+\end{subfigure}
+\end{figure}
+Its good practice to null the pointer after freeing it, because after you free it, its not pointing to anything meaningful anymore. Dereferencing it will then have a clear error.
+
+\subsection{Resize}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s63.png}
+\end{subfigure}
+\end{figure}
+realloc does not guarantee how the memory region is initialized.
+
+\subsection{size$\_$t}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s64.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Summary}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s65.png}
+\end{subfigure}
+\end{figure}
+the method scanf is used to get user input. It blocks the program until the input is given.
+
+\section{Managing the heap}
+
+The heap ("free store") is a large pool of unused memory, used for dynamically allocated data structures. malloc() allocates chunks of memory in the heap, and maintains bookkeeping data in the heap to track allocated blocks. Free returns the allocated chunks.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s66.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Memory Corruption}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s67.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Memory Leaks}
+A memory leak happens when code fails to deallocate memory that will no longer be used.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s68.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Memory footprint:}} The amount of memory your program uses
+\underline{implications of a leak:} For short-lived programs this might be ok, but for long-lived programs this is usually bad and might:
+\begin{itemize}
+\item slow down over time due to VM thrashing
+\item use up all available memory and crash
+\item starve other programs out of memory
+\end{itemize}
+
+\section{Structures and unions}
+
+\subsection{Structured data}
+ 
+Allows us to have a collection of data of the same type in memory. A bit like a class but there are no methods or constructors.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s69.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s70.png}
+\end{subfigure}
+\end{figure}
+you can assign the value of a struct from a struct of the same type. This copies the entire contents (unlike for arrays)
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s71.png}
+\end{subfigure}
+\end{figure}
+Even if the struct has an array in it the contents will be copied over by the assignment operator. This is because the copy operations copies the region of memory for that struct and doesnt care about the types.\\
+Structs can be passed as arguments, by default they are passed by value, to pass by reference we pass a pointer to the struct. We can also return structs (right picture)
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s72.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s73.png}
+\end{subfigure}
+\end{figure}
+\subsection{Unions}
+Like a struct but only allocates enough memory to hold the largest member.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s74.png}
+\end{subfigure}
+\end{figure}
+Only use a union if youre interested in only one of the members.
+
+\section{Type definitions}
+
+\subsection{typedef}
+
+Introduces a new type definition i.e a new name for a type, hence it can be used wherever the original type could be.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s75.png}
+\end{subfigure}
+\end{figure}
+This helps us avoiding complex declarations e.g:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s76.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Struct tags and typedefs}
+
+Struct tags are the names that we give the structs e.g point in struct point$\{...\}$.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s77.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{C namespaces}
+
+There are 4 namespaces in C:
+\begin{itemize}
+\item Label names (goto...)
+\item Tags (one namespace for all struct, union,enum's)
+\item Member names (one namespace for each struct union,enum)
+\item Everything else (including typedef) 
+\end{itemize}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s78.png}
+\end{subfigure}
+\end{figure}
+
+\section{Dynamic Data Structures}
+
+\subsection{Singly-Linked List}
+
+A list consisting of nodes. Each node in the list contains some element as its payload and a pointer to the next node in the linked list. The last node in the list contains NULL instead of the next pointer. We can implement this using structs. We represent each node as a struct.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s79.png}
+\end{subfigure}
+\end{figure}
+We create a method push() which dynamically adds nodes to the list.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s80.png}
+\end{subfigure}
+\end{figure}
+We notice that the above implementation of push() has a leak as we have not deallocated the malloc(). We can check if the program has a leak in the terminal with (assuming our file is called $push\_list.c$)
+\begin{center}
+$\$$ gcc -o push$\_$list -g -Wall $push\_list.c$\\
+$\$$ valgrind -leak-check=full $./push\_list.c$\\
+
+\end{center}
+We can create a generic linked list by using "void *" as a type.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s81.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{ Wrapping up C }
+
+\section{ The C Preprocessor }
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s82.png}
+\end{subfigure}
+\end{figure}
+The cpp is not part of the C language but rather an extra language that sits on top.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s83.png}
+\end{subfigure}
+\end{figure}
+The cpp will go look for the files in the include statement. Hence using $<,> or ","$ will tell the cpp where to start looking. Since included files can include other files we could get a cyclic dependance.
+
+\subsection{Macro Definitions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s84.png}
+\end{subfigure}
+\end{figure}
+C macros purely work on text. The default definition of any macro is 1.
+\underline{\textbf{Preprocessor conditionals:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s85.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s86.png}
+\end{subfigure}
+\end{figure}
+In C we can use a backslash to continue the code on the next line. This is used for readability
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s87.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s88.png}
+\end{subfigure}
+\end{figure}
+
+\section{Modularity}
+In C there is a difference between Declarations and Definitions:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s89.png}
+\end{subfigure}
+\end{figure}
+
+\underline{\textbf{ Compilation Units:}} What gets fed into the C compiler (cc1) i.e compilation unit is what comes out of the cpp meaning the c file after all the substitutions have been made.\\
+Declarations can be annotated with:
+\begin{itemize}
+\item \textbf{static:} definition (also static) is in this compilation unit, and cant be seen outside it
+\item \textbf{extern:} definition is somewhere else, either in this compilation unit or another.
+\end{itemize}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s90.png}
+\end{subfigure}
+\end{figure}
+A Module is a self contained piece of a larger program. It consists of:
+\begin{itemize}
+\item Externally visible:
+\begin{itemize}
+\item functions to be invoked
+\item typedefs and perhaps global variables
+\item cpp macros
+\end{itemize}
+\item Internal functions types, global variables that clients shouldnt look at
+\end{itemize}
+Modularity in C is done using header files:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s91.png}
+\end{subfigure}
+\end{figure}
+There is cpp idom for header files to avoid a cyclic dependancy:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s92.png}
+\end{subfigure}
+\end{figure}
+the $\#ifndef$ ensures that the body will only be used once in the file.\\
+\underline{Example: Linked List:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s93.png}
+\end{subfigure}
+\end{figure}
+
+\section{Function Pointers}
+A pointer with the address of some code which corresponds to that function. Calling a function pointer, calls whatever function that pointer is pointing to.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s94.png}
+\end{subfigure}
+\end{figure}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s95.png}
+\end{subfigure}
+\end{figure}
+\section{Assertions}
+
+\subsection{Assertions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s96.png}
+\end{subfigure}
+\end{figure}
+Where true is a non-zero value. \\
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s97.png}
+\end{subfigure}
+\end{figure}
+Assert is a controlled crash, hence it is of no use to the user. Assertions are for programmers to find bugs, not for programs to detect erros.
+
+
+\section{goto}
+
+goto jumps to a specific label in a program.
+
+\subsection{When to use goto:}
+DONT,however...it can be useful in:
+\begin{itemize}
+\item Early termination of nested loops
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s98.png}
+\end{subfigure}
+\end{figure}
+\item Cleanup conditions
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s99.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s100.png}
+\end{subfigure}
+\end{figure}
+\end{itemize}
+
+\section{setjmp() and longjmp()}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s101.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s102.png}
+\end{subfigure}
+\end{figure}
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s103.png}
+\end{subfigure}
+\end{figure}
+This can be used for Coroutines
+
+\section{Coroutines}
+A way for functions to call eachother without doing subroutine calls. This allows us to have 2 functions running at the same time.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s104.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s105.png}
+\end{subfigure}
+\end{figure}
+This allows us to implement a socalled Context switch:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s106.png}
+\end{subfigure}
+\end{figure}
+But how do we start?
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s107.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s108.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Implementing dynamic memory allocation}
+
+In order to run a java program we need alot of stuff which actually isnt written in java. The Java runtime contains memory allocator,memory manager, garbage collector and a low level I/O routine much of which is written in C/C++. The java compiler generates byte code. The Java trace compiler will translate that into efficient machine code this is the JAVA VM. In C this doesnt exist, there is a C library, but it is not needed to run a C program. Hence this is why C is good for writing a Operating Systems. 
+
+\section{Dynamic Memory allocation}
+
+The Memory allocator gives out memory to applications in blocks. It sits inbetween the application itself which calls malloc and allocates memory out of some area of the virtual address space which has been allocated to it inturn by the OS, when the process starts it gets allocated to a certain amount of memory (the heap). malloc allocates memory out of the heap in arbitrary sized units and hands it to the application and frees it after use.
+Recall the malloc package:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s109.png}
+\end{subfigure}
+\end{figure}
+\underline{Memory allocation example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s110.png}
+\end{subfigure}
+\end{figure}
+The bottom is empty because we want to have the Null value. Heap is the part that malloc uses, the heap grows upwards when more and more memory is used. The Stack starts at the top of the memory and grows down. The Data segment is data the compiler knows exists. Text contains the machine code
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s111.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Explicit allocation}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s112.png}
+\end{subfigure}
+\end{figure}
+The blue arrow on the right is the earliest point in which the memory can be freed i.e it will not be used any more in the program, the orange arrow on the right is when the program calls free. The blue arrow on the left is the latest possible point in which the memory must be malloced.\\
+In contrast garbage collection has the following timeline
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s113.png}
+\end{subfigure}
+\end{figure}
+Garbage collection makes it easier to code but decreases performance.\\
+There is a third approach is Compiler support which is something inbetween the above approaches.  The compiler looks at the program and figures out that an object is needed, because of the function call. The compiler can prove when the object is no longer needed.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s114.png}
+\end{subfigure}
+\end{figure}
+Compiler support cant be used for arbitrary programs and hence have a garbage collection which kicks in
+
+\section{The Explicit memory allocation Problem}
+
+\underline{Assumptions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s115.png}
+\end{subfigure}
+\end{figure}
+\underline{Allocation Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s116.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s117.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Performance goal: Throuput}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s118.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Performance goal: Peak memory utilization}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s119.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Fragmentation}
+
+The heap gets into a state where it becomes hard to efficiently use it. We distinguish between:
+\begin{itemize}
+\item internal fragmentation
+\item external fragmentation
+\end{itemize}
+\underline{Internal fragmentation:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s120.png}
+\end{subfigure}
+\end{figure}
+\underline{External fragmentation:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s121.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{How to free blocks}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s122.png}
+\end{subfigure}
+\end{figure}
+this method introduces internal fragmentation
+
+\subsection{Keeping track of free blocks}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s123.png}
+\end{subfigure}
+\end{figure}
+\begin{itemize}
+\item \textbf{Implicit List}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s124.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s125.png}
+\end{subfigure}
+\end{figure}
+It is the payload which is aligned. 16 byte alignment makes it more efficent for the hardware to access values which are 16 bytes in size. A 16 byte aligned value is guaranteed not to span 2 memory pages and not to span 2 cache lines\\
+The start of the heap is a word that never gets returned to the user because when we allocate the very first block of the heap, the first word is used to hold the size and the flag, which means what were returning is a pointer to the second word. A size of 0 indicates the end of the heap.
+\underline{finding a free block}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s126.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s127.png}
+\end{subfigure}
+\end{figure}
+\underline{Allocating a free block}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s128.png}
+\end{subfigure}
+\end{figure}
+\underline{Freeing a block}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s129.png}
+\end{subfigure}
+\end{figure}
+\end{itemize}
+
+\section{Coalescing}
+
+Transforming smaller blocks into fewer larger blocks to reduce external fragmentation
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s130.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s131.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s132.png}
+\end{subfigure}
+\end{figure}
+
+\section{Explicit free lists}
+
+\subsection{concept}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s133.png}
+\end{subfigure}
+\end{figure}
+\subsection{Allocation}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s134.png}
+\end{subfigure}
+\end{figure}
+\subsection{freeing}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s135.png}
+\end{subfigure}
+\end{figure}
+\subsection{summary}
+Allocation is linear time in number of free blocks which is much faster than implicit lists when most of the memory is full. Its slightly more complicated to allocate and free since we need to splice blocks in and out of the list. Some extra space needed for the pointers.
+\section{Segregated free lists}
+
+Builds on the explicit free list. The idea is that we have a list for each size class of blocks:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s136.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s137.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s138.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Basic x86 architecture}
+
+\section{What is an instruction set architecture}
+
+\underline{\textbf{Architecture:(also instruction set architecture:ISA)}} The parts of a processor design that one needs to understand to write assembly code (e.g instruction set specification, registers)
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s139.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Microarchitecture:}} Implentation of the architecture (cache sizes and core frequency)
+
+\subsection{CISC: Complex Instruction Set}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s140.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{RISC: Reduced Instruction Set}
+Idea was to have fewer easier instructions and give more work to the compiler. This lead to more space available for cache aswell as better compiler optimization.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s141.png}
+\end{subfigure}
+\end{figure}
+
+\section{Basics of machine code}
+
+There are two common ways to write $x86$ Assembler:
+\begin{itemize}
+\item $AT\&T$ syntax (What we will use)
+\item Intel syntax: Generally used for Windows machines
+\end{itemize}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s142.png}
+\end{subfigure}
+\end{figure}
+\subsection{Compiling into assembly}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s143.png}
+\end{subfigure}
+\end{figure}
+\subsection{Assembly data types}
+
+Integer data of 1,2,4 or 8 bytes which hold data values or addresses (untyped pointer)\\
+Floating point data of 4,8 or 10bytes\\
+No aggregate types(arrays,structures,...) only coniguously allocated bytes in memory
+
+\subsection{Assembly code operations}
+
+We can perform arithmetic function on register or memory data.\\
+Transfer data  between memory and register i.e
+\begin{itemize}
+\item Load data from memory into register
+\item Store register data into memory
+\end{itemize}
+Transfer control i.e Unconditional jumps to/from procedures and conditional branches
+
+\subsection{Object Code}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s144.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Machine instruction example}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s145.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s146.png}
+\end{subfigure}
+\end{figure}
+\section{x86 architecture}
+
+\subsection{8086 Registers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s147.png}
+\end{subfigure}
+\end{figure}
+The source/destination index registers were limited by the instruction set to only hold adresses.\\
+The stack pointer was a register only used for the stack.\\
+The only general purpose were the top 4 registers which are divided into lo and hi (remnants of the previous 8-bit design)
+\subsection{80386 Registers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s148.png}
+\end{subfigure}
+\end{figure}
+The 8086 was extended by 16 bits, they kept the old names to refer to the halfs and added e to the names to indicate the extended register.
+
+\subsection{x86-64 integer registers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s149.png}
+\end{subfigure}
+\end{figure}
+Extension of the 386 by 32 bits with prefix now r. They added 8 more registers. all registers are now general purpose.
+
+\subsection{Moving data}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s150.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s151.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Possible combinations}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s152.png}
+\end{subfigure}
+\end{figure}
+\subsection{Simple memory addressing modes}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s153.png}
+\end{subfigure}
+\end{figure}
+Since we can use the instruction pointer as a source, code can be executed anywhere in memory. Displacement is a register offset.
+\underline{\textbf{Example:}}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s154.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s155.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s156.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s157.png}
+\end{subfigure}
+\end{figure}
+The most general form allows us to perform tricks e.g array indexing, accessing fields in a struct, accessing fields in an array of structs. S is one of those sizes depending on the data type being used.\\
+\subsection{Address Computation}
+Address computation is done with the lea function:
+\begin{center}
+$lea Src,Dest$ 
+\end{center}
+where Src is the address mode expression and Dest gets set to the address denoted by the expression. With this function we can compute addresses without a memory reference or compute arithmetic expressions of the form $x + k\cdot y, k \in \{1,2,4,8\}$
+\section{x86 integer arithmetic}
+
+\subsection{ordinary arithmetic operations}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s158.png}
+\end{subfigure}
+\end{figure}
+There is no distinction between signed and unsigned values. The processor doesnt have much of a concept of the difference, its just a register, just a 64-bit value. Hence none of these operations imply signed or unsigned computation because their results are the same.
+\subsection{Single operand instructions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s159.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Using leal for arithmetic expressions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s160.png}
+\end{subfigure}
+\end{figure}
+The following happens in the lea code lines:
+\begin{enumerate}
+\item rdi and rsi are the first arguments which are x and y respectively. lea takes rdi as the base and rsi as the index i.e it adds the two together. The result is put into eax.
+\item takes y, adds it to y multiplied by 2 and stores it in edx, hence we have a multiplication by 3. There is no instruction on a typical RISC machine which multiplies a number by 3. We multiply by 3 because later we need a multiplication by 48 which is 3*16. A multiplication by 16 can easily be computed a left shift.
+\item we add rdi to rdx and add 4. Hence we are doing 2 instructions in one with lea
+\end{enumerate}
+
+\section{condition codes}
+
+Extra bits in the processor state. Can be thought of as 1-bit registers. They are contained in the status register.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s161.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Compare Instruction}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s162.png}
+\end{subfigure}
+\end{figure}
+ \subsection{Test Instruction}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s163.png}
+\end{subfigure}
+\end{figure}
+\subsection{SetX Instructions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s164.png}
+\end{subfigure}
+\end{figure}
+The result of the computations get set into the low byte of some other register. If setting  the value on a lower order of bits of a register than the top bits are set to 0 e.g if we set eax to a value, then rax gets the same value and we zero out the top bits.,
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s165.png}
+\end{subfigure}
+\end{figure}
+\subsection{Jump Instructions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s166.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Compiling C control flow}
+
+\section{if-then-else statements}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s167.png}
+\end{subfigure}
+\end{figure}
+Body 1 is the case where x>y, Body 2 is x<= y.
+\subsection{Conditional move}
+In some cases the compiler can avoid using branch statements and use the so called conditional move instruction:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s168.png}
+\end{subfigure}
+\end{figure}
+Conditional move is more efficient than branching.
+
+\section{do-while loops}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s169.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s170.png}
+\end{subfigure}
+\end{figure}
+
+\section{while loops}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s171.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s172.png}
+\end{subfigure}
+\end{figure}
+
+\section{for loops}
+A for loop is a while loop with an initialisation instruction.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s173.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s174.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Summary of loop variants}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s175.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s176.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s177.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s178.png}
+\end{subfigure}
+\end{figure}
+
+\section{compact switch statements}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s179.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s180.png}
+\end{subfigure}
+\end{figure}
+When we execute the case statement, we look at the value to be tested. We get the address to jump to from the jump table. The assembly code is compact because of the indirect jump, which jumps to an address whos value depends on x (rdi).
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s181.png}
+\end{subfigure}
+\end{figure}
+The order of the jump table might not be in the same order as the cases because there might be values for x which are not checked and hence must be directed to the default case.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s182.png}
+\end{subfigure}
+\end{figure}
+
+\section{sparse switch statements}
+The case values have to be constants. If the values are far apart from eachother, its not practical to use a jump table e.g
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s183.png}
+\end{subfigure}
+\end{figure}
+An obvious solution would be to implement this with if else statements, but this grows linear with the cases. When compiled we get the following code:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s184.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s185.png}
+\end{subfigure}
+\end{figure}
+
+\section{Procedure call and return}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s186.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s187.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s188.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s189.png}
+\end{subfigure}
+\end{figure}
+
+\section{Calling conventions}
+
+How do you construct a call/return using machine code.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s190.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Register saving conventions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s191.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s192.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s193.png}
+\end{subfigure}
+\end{figure}
+Argument Registers are caller save registers.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s194.png}
+\end{subfigure}
+\end{figure}
+
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s195.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s196.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s197.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s198.png}
+\end{subfigure}
+\end{figure}
+We can keep the values of a and i in registers because the swap function has to preserve callee save registers, hence we dont need to write them to memory.
+
+\subsection{Procedure Calls: Locals in the red zone}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s199.png}
+\end{subfigure}
+\end{figure}
+\subsection{Procedure Calls: Long swap}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s200.png}
+\end{subfigure}
+\end{figure}
+\subsection{Procedure Calls: non-leaf w/o stack frame}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s201.png}
+\end{subfigure}
+\end{figure}
+\subsection{Procedure Calls: call using a jump}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s202.png}
+\end{subfigure}
+\end{figure}
+
+
+\chapter{Compiling C data Structures}
+
+\section{One-dimensional arrays}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s203.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Array allocation}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s204.png}
+\end{subfigure}
+\end{figure}
+When allocating multiple arrays its not guaranteed that they will be contiguous in memory.
+\subsection{Array access}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s205.png}
+\end{subfigure}
+\end{figure}
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s206.png}
+\end{subfigure}
+\end{figure}
+In c there is no bound checking, Out of range behaviour is implementation dependant and there is no guaranteed relative allocation of different arrays.
+\subsection{Array Loop example}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s207.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s208.png}
+\end{subfigure}
+\end{figure}
+
+\section{Nested Array}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s209.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s210.png}
+\end{subfigure}
+\end{figure}
+\subsection{Nested array row access}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s211.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s213.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Nested array row access code}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s212.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Nested array element access code}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s214.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s215.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Multi-level arrays}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s216.png}
+\end{subfigure}
+\end{figure}
+
+
+\subsection{Element access in multi-level array}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s217.png}
+\end{subfigure}
+\end{figure}
+In comparison to nested arrays we need two memory accesses to access an element in a multi-level array. The first one is to access the first pointer table, the second is to access the element of the array the pointer is pointing to. For each level, we need a memory access more. For nested array we always need one memory access.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s218.png}
+\end{subfigure}
+\end{figure}
+\subsection{Referencing examples}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s219.png}
+\end{subfigure}
+\end{figure}
+
+\section{Structures}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s220.png}
+\end{subfigure}
+\end{figure}
+The members appear in the same order in memory as declared, but there could be padding inbetween
+\subsection{Accessing structure members}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s221.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s222.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s223.png}
+\end{subfigure}
+\end{figure}
+
+\section{Alignment}
+
+If we have a primitive data type which requires K bytes, the address where that data is stored must be a multiple of K. The compiler inserts gaps in structures to ensure correct alignment of fields if necessary.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s228.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Alignment with structures}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s224.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s225.png}
+\end{subfigure}
+\end{figure}
+In some cases reordering the fields from largest to smallest size can save memory.
+\section{Arrays of structures}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s226.png}
+\end{subfigure}
+\end{figure}
+\section{Unions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s227.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Linking}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s229.png}
+\end{subfigure}
+\end{figure}
+Linkers allow modularity. A program can be written as a collection of smaller source files, rather than one big one. Linkers offer more efficiency aswell, as we can compile the filles seperately. If we change a source file we dont need to recompile all the source files, but only the changed one and then it is relinked. Besides being faster it also saves memory as common functions can be aggregated into a single file. Linkers work as follows:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s230.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s231.png}
+\end{subfigure}
+\end{figure}
+the symbol table is located in the object file.
+
+\section{Object files}
+
+There are 3 types object files:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s232.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s233.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Sections:}} refers to bits in a file
+\underline{\textbf{Segments:}} refers to bits in memory
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s234.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s235.png}
+\end{subfigure}
+\end{figure}
+\section{Linker symbols}
+
+Linker symbols can fall into one of the three categories:
+\begin{itemize}
+\item \textbf{\underline{Global symbols:}} Symbols definded by a module m that can be referenced by other modules e.g non-static C functions and non-static global variables
+\item \textbf{\underline{External symbols:}} Global symbols that are referenced by module m but defined by some other module. (if they are not defined it results in a linker error)
+\item \textbf{\underline{Local symbols:}} Symbols that are defined and referenced exclusively by module m e.g C functions and variables defined with the static attribute. \textbf{Local linker symbols are not local program variables}
+\end{itemize}
+
+\subsection{Resolving symbols}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s236.png}
+\end{subfigure}
+\end{figure}
+declaring extern is good practice but not necessary.\\
+"int temp" is not a local symbol, it is a local variable which sits on the stack i.e its purely a feature of the code. There will be some information in the debug section of the object file regarding the value of temp. The linker does not need to deal with temp, because the compiler has already generated all the code to deal with it.
+\subsection{Relocating code and data}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s237.png}
+\end{subfigure}
+\end{figure}
+Each corresponding section of the individual files are merged into a single file. All of the references between the files are matched up i.e there are no more unresolved symbols. All symbols are given an address 
+
+
+\subsection{Strong and weak symbols}
+
+\underline{\textbf{Strong:}} Procedures and initialized globals
+\underline{\textbf{Weak:}} uninitialized globals
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s238.png}
+\end{subfigure}
+\end{figure}
+If we compile the left one by itself we get foo in the .data file. If we compile the right one by itself we get foo in the .bss file. However if we compile both together the linker thinks both foo's are the same thing
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s239.png}
+\end{subfigure}
+\end{figure}
+Hence if we declare foo in the right as extern it means its a reference to a strong symbol somewhere else and the above rules dont reply. Hence if we use extern we will never use weak symbols.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s240.png}
+\end{subfigure}
+\end{figure}
+Hence avoid Global variables if possible. Otherwise use static, initialize defined global variables or use "extern" when using external global variables.
+
+\section{Static libraries}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s241.png}
+\end{subfigure}
+\end{figure}
+\underline{\textbf{Archive:}} A collection of documents
+\underline{\textbf{Library:}} A  collection of object files
+The solution to this is static libraries.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s242.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s243.png}
+\end{subfigure}
+\end{figure}
+Commonly used libraries are:
+\begin{itemize}
+\item libc.a (the C standard library)
+\item libm.a (the C math library)
+\end{itemize}
+The standard C library is always included in the path when we search for something.\\
+We can include a library to the path with the gcc as follows:
+$$ -l<name_of_libary>$$
+e.g to include the math library we would write -lm. In this case the math library is already in a directory the linker already knows about. To add another directory to the search path we write:
+$$-L<file_path>$$
+a "." for the file path means the current directory
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s244.png}
+\end{subfigure}
+\end{figure}
+\subsection{Loading executable object files}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s245.png}
+\end{subfigure}
+\end{figure}
+The standard C library knows where the end of the bss file is and hence knows where to start allocating memory for the heap. The loader takes the Executable Object File and distributes it in memory as seen on the right.
+
+\section{Shared libraries}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s246.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s247.png}
+\end{subfigure}
+\end{figure}
+\subsection{Dynamic linking at load time}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s248.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Dynamic linking at runtime}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s249.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s250.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Code Vulnerabilities}
+
+
+\section{Worms and Viruses}
+
+\underline{\textbf{Worm:}} A program that can run by itself, it can propagate a full working version of itself to other computers
+
+\underline{\textbf{Virus:}} Code that can add itself to other programs, it cannot run independently
+
+\section{Stack Overflow bug}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s251.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s252.png}
+\end{subfigure}
+\end{figure}
+As soon as the string gets large enough, we get a segmentation fault. The program doesn't have anything obvious that crashes itself, it doesnt corrupt/manipulate its own memory. What happens is that the input can be used to subvert a poorly written program e.g gets in order to corrupt memory and cause a segmentation fault. These days modern compilers have protection against this particular attack.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s253.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s254.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s255.png}
+\end{subfigure}
+\end{figure}
+As soon as we fill up the stack frame and add more input, the return address of the buffer becomes random. So rather than causing the program to crash we can make it jump and execute some other code. If we know the address that the stack pointer points to, we can cause the return address to jump into the code we have just added to the stack frame. It was possible to find out the stack pointer before address randomization, because you could test it out on your own machine first, and hence all machines of the same type would have the same stack pointer.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s256.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s257.png}
+\end{subfigure}
+\end{figure}
+\section{Stopping overrun bugs}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s259.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s258.png}
+\end{subfigure}
+\end{figure}
+
+\section{XDR vulnerability}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s260.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s261.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s262.png}
+\end{subfigure}
+\end{figure}
+Allocating a large amount of memory would most likely fail with malloc, but since this is a large unsigned value (signed * unsigned = unsigned) it wraps around in this case $2^20 + 1 = 1$ which on a 32-bit machine would allocate 32-bits. So malloc would return true and we would end up overwriting an enormous amount of data.
+
+\section{CTF}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s263.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Floating Point}
+
+\section{Representing Floating Point}
+
+\subsection{Fractional binary numbers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s264.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s265.png}
+\end{subfigure}
+\end{figure}
+This notation has its limitation, we can only exactly represent numbers of the form $\frac{x}{2^k}$. Rational numbers have repeating bit patterns.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s266.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Floating point representation}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s267.png}
+\end{subfigure}
+\end{figure}
+
+\section{Types of IEEE floating point numbers}
+
+\subsection{Precisions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s268.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Floating point in C}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s269.png}
+\end{subfigure}
+\end{figure}
+
+
+\subsection{Normalized Values}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s270.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s271.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Denormalized values}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s272.png}
+\end{subfigure}
+\end{figure}
+There are 2 distinct values for 0 because of the sign bit
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s273.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Special values}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s274.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Properties of encoding}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s275.png}
+\end{subfigure}
+\end{figure}
+
+\section{Floating point ranges}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s276.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s277.png}
+\end{subfigure}
+\end{figure}
+Denormalized numbers have equal spacing around zero because they have the same E value.
+
+\section{Floating-point rounding and arithmetic}
+
+
+\subsection{Rounding}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s278.png}
+\end{subfigure}
+\end{figure}
+Rounding to nearest even avoids biased rounding. All other rounding types are statistically biased i.e a sum of set of positive numbers will consistently be over- or under- estimated.
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s279.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Rounding binary numbers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s280.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Creating a floating point number}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s281.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s282.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s283.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s284.png}
+\end{subfigure}
+\end{figure}
+
+\section{Floating point addition and multiplication}
+
+\subsection{Floating point multiplication}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s285.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s288.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Floating point addition}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s286.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s287.png}
+\end{subfigure}
+\end{figure}
+
+\section{SSE floating point}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s289.png}
+\end{subfigure}
+\end{figure}
+Here we focus on SSE3:
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s290.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s291.png}
+\end{subfigure}
+\end{figure}
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s292.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{SSE3 instruction names}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s293.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s294.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s295.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{SSE3 Examples}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s296.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s297.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Constants}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s298.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s299.png}
+\end{subfigure}
+\end{figure}
+The top bit is the sign bit, the next 11 bits are the exp field, hence the first 12 bits are the exponent which correspond to 3 hex digits. i.e 0x404 =1028 is the exponent, since the bias is 1023 we have 1028-1023 = 5, so the actual exponent value is 5. The rest is the significand which is all zeroes. There is an implied leading one. Hence the value is $1 \cdot 2^5$
+
+\subsection{Vector Instructions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s300.png}
+\end{subfigure}
+\end{figure}
+
+\chapter{Optimizing Compilers}
+
+\section{Optimizing Compilers}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s301.png}
+\end{subfigure}
+\end{figure}
+Default is O0 because it offers faster compilation. O1,O2,O3 are more optimization respectively but higher number does not guarantee that there is better performance. The compiler only does optimization which preserves the functionality of the code
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s302.png}
+\end{subfigure}
+\end{figure}
+\underline{Strengths and Weaknesses}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s303.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s304.png}
+\end{subfigure}
+\end{figure}
+
+\section{Code motion and precomputation}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s305.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s306.png}
+\end{subfigure}
+\end{figure}
+
+\section{Strength reduction}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s307.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s308.png}
+\end{subfigure}
+\end{figure}
+
+\section{Common subexpressions}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s309.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s310.png}
+\end{subfigure}
+\end{figure}
+
+\section{Optimization blocker: Procedure calls}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s311.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s312.png}
+\end{subfigure}
+\end{figure}
+the compiler treats procedures as black boxes and does not replace it with its result, even if its called multiple times in a loop because it might not return the same result given the same inputs, as it could be dependant on global states.
+Hence in the above example we have to optimize the code because the compiler wont do it.
+
+\section{Optimization blocker: memory aliasing}
+
+When two different memory references specify a single location
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s313.png}
+\end{subfigure}
+\end{figure}
+\underline{Example:}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s314.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s315.png}
+\end{subfigure}
+\end{figure}
+What happens in the possible aliasing scenerio is that B[0] is overwritten by the first three elements of A becoming 3, then as we sum up the second row of A to calculate B[1], we set B[1] = A[4] to 0 and add A[3] =3 + A[4] (which is now 3) + A[5]=16 hence we get 22. The compiler doesnt optimize the code because it assumes this is the behaviour we want. We can remove aliasing by using temporary variables in this case copying the array elements into "val". The unaliased version still creates some interference because we are still overwriting some memory.
+
+\section{Blocking and unrolling}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s316.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s317.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s318.png}
+\end{subfigure}
+\end{figure}
+Blocking is more cache line friendly because we are using spatial locality more efficiently. The size of the block depends on the architecture i.e how much memory is brought to the cache. The second improvement is unrolling of the inner loops, which allows us to reuse some of the computed values. In general this is the responsability of the programmer, the compiler will not do this optimization
+
+\chapter{Architecture and Optimization}
+
+In order to measure performance we use benchmarks. The benchmark should be as general as possible testing different datatypes e.g:
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s319.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s320.png}
+\end{subfigure}
+\end{figure}
+
+A way to express performance of a program that operates on vectors or lists is Cycles per Element (CPE). The \textbf{Execution time} is given by:
+$$ CPE \cdot n + \text{ overhead }$$
+We can increase performance by using the optimization flags, or other basic code optimizations:
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s321.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s322.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s323.png}
+\end{subfigure}
+\end{figure}
+
+\section{modern processor design}
+
+\subsection{Sequential processor stages}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s324.png}
+\end{subfigure}
+\end{figure}
+In practice this is too slow. Not all instructions need each step. And there will be steps which are idle. The solution is using pipelined hardware.
+\subsection{Pipelined hardware}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s325.png}
+\end{subfigure}
+\end{figure}
+The following limitations for pipelining exist:
+\begin{itemize}
+\item \textbf{Data Hazards:} Hazards caused by data dependencies i.e we need a result from another calculation. These can be solved by implementing data forwarding or stalling the pipeline
+\item \textbf{Control Hazards:} Hazards caused by branches i.e we dont know for sure wether or not to take a branch. This can be solved by rollback or stalling  the fetch stage until the branch is known.
+\end{itemize}
+
+\subsection{Performance}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s326.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s327.png}
+\end{subfigure}
+\end{figure}
+We can optimize IC by optimizing our code. We can decrease CCT, by pipelining. When there are more stages, the signal doesnt need to traverse as far and hence we can increase the clock frequency. What we can do to improve the CPI is widen the Processor i.e use a superscalar processor
+
+\subsection{Superscalar processor}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s328.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s329.png}
+\end{subfigure}
+\end{figure}
+We need to fetch instructions in the order they are being executed in. But when we are actually executing them then we can execute any instruction which has no dependencies. We do need to preserve the semantics of the program hence we need to commit the instructions in the same order as they have been fetched, this is done with the reorder buffer.
+
+
+\section{Superscalar processor performance}
+
+\subsection{Intel Haswell CPU schematics}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s330.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s331.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s332.png}
+\end{subfigure}
+\end{figure}
+Cycles/issue means how many cycles we need to wait before we can issue a new instruction on that FU
+
+\subsection{Latency vs Throughput}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s333.png}
+\end{subfigure}
+\end{figure}
+If we have independent multiplications we can finish the 5 multiplications in 5 cycles. If there are sequential dependencies for each of the multiplications then we can only do one multiply every 5 cycles and the whole calculation will then take 25 cycles.
+
+\subsection{Data Hazards}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s334.png}
+\end{subfigure}
+\end{figure}
+RAW is a true dependancy because we really need to read the value that instruction i writes. WAW, WAR can be avoided because j is only writing a value and does not need to wait for anything. Register renaming allows this by using extra registers to store the write value of j and hence not overwrite the value of i.
+
+\subsection{Register Renaming}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s335.png}
+\end{subfigure}
+\end{figure}
+The ISA defines how many registers are available the "architectural registers". The processor itself can have a larger pool of physical registers. We dont add more registers to the ISA because we want to keep backwards compatability. There are sometimes add ons to the ISA but in general we dont want to change the contract between software and hardware. 
+
+\subsection{Instruction Execution}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s336.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s337.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Meaning for Program performance}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s338.png}
+\end{subfigure}
+\end{figure}
+We get the latency bound by looking at the latency entries of the respective operation from the table on the right. In the original Combine4 program the add was still slower, this was because we could exploit it some more using loopunrolling. The value of the throughput bound is dependant not only on the number of functional units but also on the number of loads that can be done. We see that the throughput bound offers us better performance and hence we will want our program to be througput bound and not sequential, this can be done with reassociation
+
+\section{Reassociation}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s339.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s340.png}
+\end{subfigure}
+\end{figure}
+The reason that the change of brackets increase performance is because we remove the dependancy off the previous result, hence we allow for more efficient scheduling. For floating point values this would not be valid because FP's are not associative. If you however know that the the values wont be comprimised then you can do it. The resulting computation structure is:
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s341.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Separate Accumulators}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s342.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s343.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s344.png}
+\end{subfigure}
+\end{figure}
+This increases the performance for the add because we are overlapping operations. In the previous case we were doing two loads and then the respecive additions, whereas now we can do the loads and additions simultaneously. It does not affect the other arithmetic operations because they have a higher latency.
+
+\section{Combining multiple accumulators and unrolling}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s345.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s346.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s347.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s348.png}
+\end{subfigure}
+\end{figure}
+The compiler can do loop unrolling, but will not know which is best, hence we must make it specific in the code.
+
+\subsection{AVX2 SIMD operations}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s349.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s350.png}
+\end{subfigure}
+\end{figure}
+
+
+\chapter{Caches}
+
+\section{Intro}
+
+\subsection{Processor-memory bottleneck}
+
+The CPU performance continouisly improves, but the bandwidth to access memory is evolving much slower. E.g Haswell core can process 512 Bytes/cycle but the bandwidth is 10 Bytes/cycle, hence accessing main memory results in stalls. The solution to this problem is to use a hierarchy of caches.
+
+\subsection{General Cache concepts}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s351.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s352.png}
+\end{subfigure}
+\end{figure}
+Because the huge difference between hit and miss times each percent in improved hit rate leads to enormous performance gains.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s353.png}
+\end{subfigure}
+\end{figure}
+Another metric is "MPKI" which is misses per kilo instruction. MPKI is how many misses per thousand instructions.
+
+\subsection{Two-level cache performance}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s354.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Types of cache misses}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s355.png}
+\end{subfigure}
+\end{figure}
+
+\section{Cache organization}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s356.png}
+\end{subfigure}
+\end{figure}
+We need S bits to determine which set of the cache we want to access. Each set can have multiple entries (also called "ways"). Each block will have:
+\begin{itemize}
+\item \textbf{Valid bit:} Indicates wether the contents are a valid cache entry
+\item \textbf{Tag:} Used to determine a hit 
+\end{itemize}
+
+\section{Cache reads}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s357.png}
+\end{subfigure}
+\end{figure}
+the block offset indicates which byte of the block we want to access\\
+the set index indicates which set we want to access\\
+Since many locations could have the same set and block access we must compare the tags to ensure we are accessing the correct element.
+
+\subsection{Direct mapped cache}
+We only have one way and block per set
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s358.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s359.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{2-way set-associative cache}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s360.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s361.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s362.png}
+\end{subfigure}
+\end{figure}
+
+\section{The memory hierarchy}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s363.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s364.png}
+\end{subfigure}
+\end{figure}
+Types of L1 caches:
+\begin{itemize}
+\item \textbf{I-cache:} Instruction Cache. There will be locality in the instructions because when we dont branch we use instructions that are right after each other.
+\item \textbf{D-cache:} Data Cache. there typically be locality in the data that is accessed (e.g arrays)
+\end{itemize}
+The Disk is persistent storage, meaning if power is lost data is preserved. The Caches are all volatile storage, hence losing power means losing data. SSD are more efficient than Disks.
+
+\section{Cache writes}
+
+\subsection{Write-hit}
+Means we have this block in the cache and we are trying to write. There are two options:
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s365.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Write-miss}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s366.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Other hardware cache features}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s367.png}
+\end{subfigure}
+\end{figure}
+
+\section{Cache optimizations}
+
+\subsection{Locality}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s368.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s369.png}
+\end{subfigure}
+\end{figure}
+\subsection{Locality with matrix multiplication}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s370.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s371.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s372.png}
+\end{subfigure}
+\end{figure}
+
+
+
+\section{Blocking}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s373.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s375.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s376.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s377.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s378.png}
+\end{subfigure}
+\end{figure}
+
+
+\chapter{Exceptions}
+
+\section{Intro}
+
+\subsection{Control Flow}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s379.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Altering the control flow}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s380.png}
+\end{subfigure}
+\end{figure}
+These alternative methods to alter control flow are known as Exceptional control flow
+
+\subsection{Exceptional control flow}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s381.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Exceptions}
+
+An exception is a transfer of control to the OS in response to some event (i.e a change in processor state)
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s382.png}
+\end{subfigure}
+\end{figure}
+Examples: div by 0, machine check, page fault, I/O request completes, Crtl-C
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s383.png}
+\end{subfigure}
+\end{figure}
+
+\section{Exception vectors and kernel mode}
+
+
+\subsection{Exception vectors}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s384.png}
+\end{subfigure}
+\end{figure}
+Each exception table entry points to the beginning address of the code which must be executed for this particular exception.
+
+\subsection{x86 ecveption vectors}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s385.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Kernel}
+
+A Kernel is a part of the operating system. It is a part which runs in privileged mode i.e you have access to resources to registers and services which you dont have in user mode. Only time Kernel mode is used if a system call is done (e.g when an exception is called there is a context switch into kernel mode).
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s386.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s387.png}
+\end{subfigure}
+\end{figure}
+
+\section{Synchronous Exceptions}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s388.png}
+\end{subfigure}
+\end{figure}
+\subsection{Fault Examples}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s389.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s390.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s391.png}
+\end{subfigure}
+\end{figure}
+A file descriptor is an integer which uniquely identifies a file
+
+\section{Asynchronous Exceptions (Interrupts)}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s392.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s393.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{x86 interrupts}
+
+There are two interrupt pins:
+\begin{itemize}
+\item INTR: interrupt request
+\item NMI: non-maskable interrupt
+\end{itemize}
+
+\subsubsection{NMI}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s394.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s395.png}
+\end{subfigure}
+\end{figure}
+A "watchdog" timer is a timer which must be periodically reset, if this timer reaches zero, the processor enters a "panic state" (blue screen) and stops working. Exceptions are indexed from 0. Since there is only one pin there is no obvious way to tell which device caused the interrupt, and hence it must check each device for the source of the interrupt (called polling). NMI interrupts are not so common, IRQ interrupts are more common
+
+\subsubsection{IRQ}
+
+Interrupt requests are sent into the INTR pin. The CPU then acknowledges that the interrupt was recieved on the INTA pin (hence we decide which device we deal with) when the device confirms it sends data to the data bits. The Data bits allow the device to send us its interrupt vector, allowing us to except different kinds of interrupts.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s396.png}
+\end{subfigure}
+\end{figure}
+
+\section{Interrupt controllers}
+
+
+\subsection{Programmable Interrupt Controllers (PIC)}
+
+Instead of having Devices which directly connect to the INTR pin like we have for the NMI pin, we have the devices connected to the PIC. This allows us to manage which devices asked for the interrupts and then transmit the proper data to the CPU
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s397.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s398.png}
+\end{subfigure}
+\end{figure}
+In the case of multiple interrupts we can use a buffer to store them.
+
+\subsection{Modern PICs}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s399.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s400.png}
+\end{subfigure}
+\end{figure}
+
+
+\chapter{Virtual Memory}
+
+\section{Address Translation:}
+
+Each Process gets its own private memory space
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s401.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Address Spaces:}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s402.png}
+\end{subfigure}
+\end{figure}
+One physical address can map to multiple addresses in Virtual memory.\\
+Virtual Memory requires the OS and hardware:
+\begin{itemize}
+\item \textbf{MMU (Memory Managing Unit):} This hardware is dedicated to translating virtual to physical addresses using a table in hardware which is managed and populated by hardware. Before memory can be accessed the virtual address needs to be translated to physical address. The memory hierarchy also applies to this.
+\end{itemize}
+
+\subsection{Address Translation with page  table}
+
+\textbf{Page:} A page is a block of memory. This is the granularity of memory (corresponds to a cache block).
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s403.png}
+\end{subfigure}
+\end{figure}
+The page table is stored in a register in the CPU. The page table can be indexed with the virtual the virtual address. The page table tells of if a particular page is valid. The Virtual page offset specifies which byte in a page we want. The Virtual page number needs to be translated into a physical page number. The Virtual page offset remains the same for the physical address.
+
+
+\section{Uses of virtual memory}
+
+\subsection{Benefits}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s404.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{VM as a tool for caching}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s405.png}
+\end{subfigure}
+\end{figure}
+Pages can be in 3 different states:
+\begin{itemize}
+\item \textbf{Unallocated:} A page which hasent yet been used by the program. These are not present on disc.
+\item \textbf{Cached:} A page which has already been allocated. A Cached page resides in main memory
+\item \textbf{Uncached:} A page which has already been allocated. But does not reside in main memory. This page can be found on disc.
+\end{itemize}
+When trying to access and Uncached page, we will get a page fault. And the page fault handler will bring in that page from memory and retry the instruction, which will then be mapped to memory.
+
+
+\subsection{DRAM cache organization}
+
+\textbf{SRAM:} Memory type used for L1,L2,L3 caches.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s406.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s407.png}
+\end{subfigure}
+\end{figure}
+
+\textbf{Paging/Swapping} Bringing in pages from Disk. The reason that the page sizes are so large, is that accessing disc is so slow. So we try to compensate by bringing in more data when accessing it.
+
+\subsection{Memory Management}
+
+The idea of mapping multiple processes to physical memory.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s408.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s409.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Protection and Sharing}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s410.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s411.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s412.png}
+\end{subfigure}
+\end{figure}
+Supervisor mode permission are pages which can only be accessed by the kernel.
+
+\section{The address translation process}
+
+\subsection{Page Hit:}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s413.png}
+\end{subfigure}
+\end{figure}
+\subsection{Page Fault:}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s414.png}
+\end{subfigure}
+\end{figure}
+The Page fault handler is implemented in software. The cache can be indexed by virtual or physical addresses. Typically the cache is indexed by physical addresses, it is a bit slower because of translation, but is simpler to implement.
+\section{Translation lookaside buffer}
+
+Caching for the page table translations.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s415.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{TLB hit}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s416.png}
+\end{subfigure}
+\end{figure}
+When considering multiple processes we can either have identification bits for the processes. An alternative is to flush the TLB when context switching.
+\subsection{TLB Miss}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s417.png}
+\end{subfigure}
+\end{figure}
+
+\section{Simple Memory system Example}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s418.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Page Table}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s419.png}
+\end{subfigure}
+\end{figure}
+\subsection{TLB}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s420.png}
+\end{subfigure}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{TLBT (TLB-tag):} Used to check wether the page we are actually accessing is stored in the TLB
+\item \textbf{TLBI (TLB- index):} Used to index into the right set of the TLB
+\end{itemize}
+\subsection{Cache}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s421.png}
+\end{subfigure}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{PPN:} Physical Page Number
+\item \textbf{PPO:} Physical Page Offset
+\item \textbf{CO:} Cache Offset: Number of bits is determined by the cache block size
+\item \textbf{CI:} Cache Index: Tells us which set to go to.
+\item \textbf{CT:} Cache Tag: Tells us if we have a hit.
+\end{itemize}
+
+\subsection{Address translation examples}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s422.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s423.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s424.png}
+\end{subfigure}
+\end{figure}
+For the last example we dont have a hit in the TLB. So we check if the page table entry 00 which has PPN 28. Hence we dont have a page fault. A page fault is not the same as a miss. A fault refers to a miss in DRAM for the page itself.
+
+\section{Multi-level page tables}
+
+\subsection{Terminology}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s425.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Linear Page Table size}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s426.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{2-level page table hierarchy}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s427.png}
+\end{subfigure}
+\end{figure}
+We use the first bits of the VM address to index the Page directory table. This points to a different Level of smaller page tables. The next bits index the page table that was pointed to by the page directory table which in turn points to an Address in VM. This reduces page Table size because a large range of addresses are represented by much fewer numbers and we only access allocate page table space on demand. The user tries to access a location in memory. If that hasn't been accessed before then the Page Directory Table will have a nuller pointer and hence a 2nd level page table is created.\\
+This idea can be extended to a k-level page table:
+We use the virtual page number to index into the multi level page tables. We take the virtual page number which is the top bits. The bottom bits are the virtual page offset. We divide the top bits by k (i.e the number of levels we have). The top 1/k bits will be used to index the first page table. The address we get from the first table will be the base of the second level table. And the next bits in the VPN will serve as a index from the second level page table. This continues until we reach the final level table which will give the PPN
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s428.png}
+\end{subfigure}
+\end{figure}
+A miss on a multi level page table has a longer miss penalty called a "page lock".
+
+\section{Case study of the core i7 processor}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s429.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s430.png}
+\end{subfigure}
+\end{figure}
+The size of the physical adress space is proportional to the amount of RAM that is expected to be accessible on the machine. If one of the levels is a null pointer, then we create this level and continue this for the whole hierarchy for this address range we are trying to access.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s431.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Core i7 TLB}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s432.png}
+\end{subfigure}
+\end{figure}
+the dirty bit indicates that the value has been changed and has a different value than whats on disc. Hence when evicting this entry we also update the disc. The Page Directory refers to the higher levels of page tables. The Page Directory entry is the highest level in the page table.
+
+\subsection{Translating with the i7 TLB}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s433.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{x86-64 paging}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s434.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s435.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s436.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s437.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s438.png}
+\end{subfigure}
+\end{figure}
+
+\section{Core i7 cache}
+
+\subsection{cache access}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s439.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s440.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Cache size}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s441.png}
+\end{subfigure}
+\end{figure}
+As seen in the formula we can increase the cache size by increasing the associativity. This has the tradeoff that we must do more tag comparisons, and hence more hardware is needed to keep this in parallel.
+
+
+\section{Caches revisited}
+
+Until now we have assumed the cache only sees a virtual or physical address. But indexing and tagging can use different addresses:
+\begin{itemize}
+\item Virtually-indexed, virtually tagged (VV)
+\item Virtually-indexed, physically tagged (VP)
+\item Physically-indexed, virtually tagged (PV)
+\item Physically-indexed, physically tagged (PP)
+\end{itemize}
+Virtually-indexed means you index the cache based on bits available from the virtual address i.e before translation. Virtually tagged means that the tag you use in the cache to check if this is really a hit comes from either the virtual address in a virtually tagged cache or from the physical address in a physically tagged cache after translation.\\
+PV is complex and rare and hence wont be discussed in further detail.\\
+PP is the most straightforward implementation. Its disadvantage though is that we must wait for the translation to happen before we can access the tag.
+
+\subsection{Virtually-indexed, virtually tagged}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s442.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s443.png}
+\end{subfigure}
+\end{figure}
+With a virtually indexed cache, we can access the cache at the same time as the MMU does the translation.
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s444.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s445.png}
+\end{subfigure}
+\end{figure}
+Synonyms are a problem because we might have multiple occurences of the same block in cache. This is a problem when writing because this would cause inconsistencies because the same block would be written and not written.
+
+\subsection{Virtually-indexed, physically tagged}
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s446.png}
+\end{subfigure}
+
+\end{figure}
+The CPU can start indexing the cache, while the MMU does the translation, but we must wait for the MMU to generate the tag in order to start comparisons in the cache.
+\subsection{Physically-indexed, physically tagged}
+\begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s447.png}
+\end{subfigure}
+\end{figure}
+Slow but easy to use as there are no homonyms or synonyms.  Frequently used as L2 or L3 cache.
+
+
+\subsection{Write Buffers}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s448.png}
+\end{subfigure}
+\end{figure}
+\end{document}
