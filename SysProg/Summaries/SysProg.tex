@@ -3320,4 +3320,303 @@ Slow but easy to use as there are no homonyms or synonyms.  Frequently used as L
 \includegraphics[width = \linewidth,scale = 1]{s448.png}
 \end{subfigure}
 \end{figure}
+
+
+\section{Large pages}
+
+\section{Optimizing TLB}
+
+\chapter{Multiprocessing and Multicore}
+
+\section{Intro}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s449.png}
+\end{subfigure}
+\end{figure}
+The smaller transistors are, the faster we can switch them allowing us to increase clock frequency. The cost of a chip is proportional to the size. Hence the smaller transistors get, the more we get for free, allowing us to create more FU's.
+
+\subsection{The power wall}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s450.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s451.png}
+\end{subfigure}
+\end{figure}
+As Transistors shrink in size, we need less supply voltage to turn the transistors on and off.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s452.png}
+\end{subfigure}
+\end{figure}
+
+
+
+\section{Consistency and Coherence}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s453.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Cache Coherency}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s454.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Memory Consistency}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s455.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s456.png}
+\end{subfigure}
+\end{figure}
+Program order and Visibility order may be different depending on the memory consistency model being used.
+
+\section{Sequential Consistency}
+
+
+
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s457.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s458.png}
+\end{subfigure}
+\end{figure}
+Each Processor has a seperate program order for the thread/process its executing
+\underline{Example:}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s459.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s460.png}
+\end{subfigure}
+\end{figure}
+
+\section{Cache coherence with snooping}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s461.png}
+\end{subfigure}
+\end{figure}
+The cache for each processor sees every read and write from the bus which the other processors make. When a processor updates an address in the cache of another processor, this processor knows and updates the value, or marks the value as invalid. This requires a write through cache (i.e updates in the cache are propogated to main memory, where as for write-back caches main memory is only written to when a block is evicted.) 
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s462.png}
+\end{subfigure}
+\end{figure}
+\subsection{MSI}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s463.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s464.png}
+\end{subfigure}
+\end{figure}
+There are two types of actions, the ones which are initiated by the processor that the cache belongs to(gray boxes) and actions which are isued by other processors and observed on the bus (orange boxes)
+
+\subsection{MESI protocol}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s465.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s466.png}
+\end{subfigure}
+\end{figure}
+The way to read the invariant diagram is the columns show which state a processor is in and the rows show which states the other processors can be in.\\
+The state machine diagram is as follows:
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s467.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s468.png}
+\end{subfigure}
+\end{figure}
+When a processor wants to write to a block it uses BusRdX. BusRdX is a request for exclusive access to a block.
+The advantage over MSI is that MESI reduces bus traffic.
+\subsection{MOESI protocol (AMD)}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s469.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s470.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{MESIF protocol (Intel)}
+Allows cache to cache transfer. If you are the designated responder then you are responsible for transferring the requested information to another cache.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s471.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s472.png}
+\end{subfigure}
+\end{figure}
+
+\section{Relaxing sequential consistency}
+
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s473.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Processor Consistency}
+
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s474.png}
+\end{subfigure}
+\end{figure}
+The reordering does not apply for data dependencies
+
+
+
+\section{Barriers and fences}
+The weaker the consistency model is, the faster/cheaper it goes in hardware. To guarantee correctness we use barriers (also called fences)
+\begin{itemize}
+\item \textbf{Compiler Barriers:} Prevents the compiler from reordering statements across from where that barrier has been placed.
+\item \textbf{Memory Barriers:} Prevents CPU from reordering instructions
+\end{itemize}
+
+
+\subsection{Compiler Barriers}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s475.png}
+\end{subfigure}
+\end{figure}
+
+\subsection{Memory barriers}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s476.png}
+\end{subfigure}
+\end{figure}
+LFENCE, SFENCE are barries only for loads and stores respectively
+
+
+
+\section{Multicore Sychronization}
+
+There are two ways to synchronize:
+\begin{itemize}
+\item Atomic operations on shared memory: Once you start on operation on memory you finish before anyone else gets access to it e.g test and set, compare and swap
+\item Interprocessor interrupts (IPIs): Used to indicate a processor is overloaded and work should be migrated
+\end{itemize}
+\subsection{Test-And-Set (TAS)}
+\begin{enumerate}
+\item Read a memory locations value into a register
+\item Store "1" into the location
+\end{enumerate}
+This requires a Read-modify-write cycle during which the memory bus must be locked. Can also be inplemented in registers, reading returns the value, sets it to 1. A write of zero resets the register.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s477.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s478.png}
+\end{subfigure}
+\end{figure}
+We can improve the lock with a while loop that checks the value of the lock. Since we are only reading from cache this saves alot of performance.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s479.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s480.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s481.png}
+\end{subfigure}
+\end{figure}
+
+\section{Compare and Swap}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s482.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s483.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s484.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s485.png}
+\end{subfigure}
+\end{figure}
+\subsection{ABA Problem}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s486.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s487.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Simultaneous Multithreading}
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s489.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s490.png}
+\end{subfigure}
+\end{figure}
+
+
+\section{Non Uniform Memory Access (NUMA)}
+
+The limitations of the SMP architecture are that when we add more cores, we do get more cycles but not necessarily proportionately more cache and the contention for main memory becomes a bottle neck. As the cores are becoming faster they use more memory bandwidth. Because of scalability limitations of busses, they are getting replaced with interconnection networks. The idea is to use \textbf{Distributed memory architecture} in which the memory is divided into sections. Each section is assigned a certain amount of cores and a memory bank. The CPU's can access the smaller amount of memory faster. If needed they can access memory in other groups but must go over the interconnect which is costly.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s491.png}
+\end{subfigure}
+\end{figure}
+This is more scalable because each slice we add, we also add memory controllers. Numa is often found in servers and larger computers. On laptops its not common.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s492.png}
+\end{subfigure}
+\end{figure}
+The interconnect is a network link which carries messages between nodes (usually processor sockets)
+Coherent view of the memory follows the protocols discussed in previous sections.
+\section{NUMA cache coherance}
+We cant snoop on the interconnect, instead NUMA uses a message-passing interconnect. To implement the protocols discussed previously we emulate a bus which ends up being similiar to snooping, but without a shared bus. Each node sends a message to all other nodes and waits for a reply from all nodes before proceeding. Another approach is to use a cache directory.
+ \begin{figure}[H]
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s493.png}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width = \linewidth,scale = 1]{s494.png}
+\end{subfigure}
+\end{figure}
+\section{Performance implications of multicore} 
+
+
+
+
+
+
+
+
+
+
 \end{document}
